@@ -73,6 +73,14 @@ export interface BraveSearchResult {
  * Complete Brave Search API response
  */
 export interface BraveSearchResponse {
+  type?: 'web' | 'news';
+  query?: {
+    original: string;
+    altered?: string;
+    spellcheck_off?: boolean;
+    show_strict_warning?: boolean;
+  };
+  results?: BraveSearchResult[];
   web?: {
     results: BraveSearchResult[];
   };

@@ -76,7 +76,7 @@ export async function searchNews(
   options?: Omit<BraveNewsSearchParams, 'q'>
 ): Promise<BraveSearchResult[]> {
   const response = await performSearch(env.brave.newsSearchUrl, { q: query, ...options });
-  return response.news?.results || [];
+  return response.results || [];
 }
 
 /**
