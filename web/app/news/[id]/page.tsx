@@ -33,7 +33,7 @@ export default function NewsDetailPage() {
       }}>
         <div style={{
           background: '#ffffff',
-          border: '2px solid #525252',
+          border: '1.5px solid #525252',
           padding: '2rem',
           textAlign: 'center'
         }}>
@@ -104,7 +104,7 @@ export default function NewsDetailPage() {
       {/* Story Header */}
       <div style={{
         background: '#ffffff',
-        border: '2px solid #525252',
+        border: '1.5px solid #525252',
         padding: '2rem',
         marginBottom: '2rem'
       }}>

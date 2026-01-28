@@ -4,7 +4,7 @@ export default function NaCzasie() {
   return (
     <div style={{
       background: '#ffffff',
-      border: '2px solid #525252',
+      border: '1.5px solid #525252',
       padding: '2rem',
       marginBottom: '2rem'
     }}>

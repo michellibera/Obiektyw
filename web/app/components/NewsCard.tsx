@@ -16,7 +16,7 @@ export default function NewsCard({ story }: NewsCardProps) {
     <div
       style={{
         background: '#ffffff',
-        border: '2px solid #525252',
+        border: '1.5px solid #525252',
         borderRadius: '0',
         overflow: 'hidden',
         transition: 'all 0.2s ease'

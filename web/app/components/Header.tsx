@@ -43,7 +43,7 @@ export default function Header({ currentPage }: HeaderProps) {
   return (
     <header style={{
       background: '#ffffff',
-      borderBottom: '2px solid #525252',
+      borderBottom: '1.5px solid #525252',
       padding: '0.75rem 2rem',
       position: 'sticky',
       top: 0,
@@ -71,16 +71,16 @@ export default function Header({ currentPage }: HeaderProps) {
         </p>
 
         {/* Top divider line */}
-        <div style={{
-          height: '2px',
+        {/* <div style={{
+          height: '1px',
           background: '#525252',
           marginBottom: '0.5rem',
           width: 'calc(100% + 4rem)',
           marginLeft: '-2rem'
-        }} />
+        }} /> */}
 
         {/* Knurled pattern - vertical lines */}
-        <div style={{
+        {/* <div style={{
           height: '8px',
           marginBottom: '0.5rem',
           width: 'calc(200% + 4rem)',
@@ -103,7 +103,7 @@ export default function Header({ currentPage }: HeaderProps) {
               }}
             />
           ))}
-        </div>
+        </div> */}
 
         {/* Divider with triangle */}
         <div
@@ -114,12 +114,12 @@ export default function Header({ currentPage }: HeaderProps) {
           marginBottom: '0.5rem',
           display: 'flex',
           alignItems: 'flex-start',
-          width: 'calc(100% + 4rem)',
-          marginLeft: '-2rem'
+          width: 'calc(200%)',
+          marginLeft: '-50%'
         }}>
           <div style={{
             flex: 1,
-            height: '2px',
+            height: '1.5px',
             background: '#525252',
             marginTop: '0px'
           }} />
@@ -131,7 +131,7 @@ export default function Header({ currentPage }: HeaderProps) {
             height: 0,
             borderLeft: '14px solid transparent',
             borderRight: '14px solid transparent',
-            borderTop: '17px solid #525252',
+            borderTop: '15.5px solid #525252',
             marginTop: '0px',
             transition: 'left 0.3s ease'
           }}
