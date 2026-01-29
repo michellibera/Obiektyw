@@ -52,7 +52,7 @@ export default function Header({ currentPage }: HeaderProps) {
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.25rem' }}>
           <h1 style={{
-            fontSize: '1.25rem',
+            fontSize: '1.5rem',
             fontWeight: '900',
             margin: 0,
             color: '#0a0a0a',

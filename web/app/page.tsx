@@ -74,8 +74,17 @@ export default function ManipulationAnalyzer() {
 
       {/* Stories List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {stories.map(story => (
-          <NewsCard key={story.id} story={story} />
+        {stories.map((story, index) => (
+          <React.Fragment key={story.id}>
+            <NewsCard story={story} />
+            {index < stories.length - 1 && (
+              <hr style={{
+                border: 'none',
+                borderTop: '1.5px solid #525252',
+                margin: '0'
+              }} />
+            )}
+          </React.Fragment>
         ))}
       </div>
     </>

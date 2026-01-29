@@ -38,7 +38,8 @@ export default function SegmentedBar({
         height: height,
         borderRadius: '0',
         overflow: 'hidden',
-        border: '1px solid #525252'
+        border: '1px solid #525252',
+        maxWidth: '400px'
       }}>
         {segments.map((segment, index) => (
           <div

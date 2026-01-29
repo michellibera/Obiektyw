@@ -16,10 +16,11 @@ export default function NewsCard({ story }: NewsCardProps) {
     <div
       style={{
         background: '#ffffff',
-        border: '1.5px solid #525252',
-        borderRadius: '0',
         overflow: 'hidden',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        maxWidth: '1000px',
+        margin: '0 auto',
+        width: '100%'
       }}
     >
       <div style={{ padding: '1rem' }}>
@@ -74,12 +75,12 @@ export default function NewsCard({ story }: NewsCardProps) {
       </div>
 
       {/* Narrative Creation Bar */}
-      <div style={{ padding: '0 1rem' }}>
+      {/* <div style={{ padding: '0 1rem' }}>
         <PercentageBar
           value={Math.round(Math.random() * 100)}
           label="Poziom kreowania narracji:"
         />
-      </div>
+      </div> */}
 
       {/* Discrete button to view analysis */}
       <div style={{

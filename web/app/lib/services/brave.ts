@@ -10,6 +10,7 @@ import type {
   BraveSearchResponse,
   BraveSearchResult
 } from '../types/brave';
+import { mockNewsResults } from '../mocks/news';
 
 ensureServerSide();
 
@@ -75,6 +76,12 @@ export async function searchNews(
   query: string,
   options?: Omit<BraveNewsSearchParams, 'q'>
 ): Promise<BraveSearchResult[]> {
+  // Return mock data if feature flag is enabled
+  if (env.features.useMockNews) {
+    console.log('[MOCK MODE] Returning mock news data instead of calling Brave API');
+    return mockNewsResults;
+  }
+
   const response = await performSearch(env.brave.newsSearchUrl, { q: query, ...options });
   return response.results || [];
 }

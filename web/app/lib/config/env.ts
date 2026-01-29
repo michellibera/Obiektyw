@@ -25,6 +25,9 @@ export const env = {
     webSearchUrl: 'https://api.search.brave.com/res/v1/web/search',
     newsSearchUrl: 'https://api.search.brave.com/res/v1/news/search',
   },
+  features: {
+    useMockNews: getEnvVariable('USE_MOCK_NEWS', false) === 'true',
+  },
 } as const;
 
 // Type guard to ensure env is only used on server
