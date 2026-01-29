@@ -16,8 +16,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#fafaf9',
-      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+      background: '#ffffff',
       color: '#0a0a0a',
       overflowX: 'hidden'
     }}>

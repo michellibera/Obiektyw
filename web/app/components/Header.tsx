@@ -144,7 +144,7 @@ export default function Header({ currentPage }: HeaderProps) {
             height: 0,
             borderLeft: '12px solid transparent',
             borderRight: '12px solid transparent',
-            borderTop: '15px solid #fafaf9',
+            borderTop: '15px solid #ffffff',
             marginTop: '0px',
             transition: 'left 0.3s ease'
           }} />
