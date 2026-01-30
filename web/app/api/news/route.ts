@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { searchNews } from '@/lib/services/brave';
+import { searchNews, searchWeb } from '@/lib/services/brave';
 
 export async function GET(request: Request) {
   try {
@@ -7,13 +7,21 @@ export async function GET(request: Request) {
     const query = searchParams.get('q') || 'Polska';
     const count = parseInt(searchParams.get('count') || '20');
     const freshness = searchParams.get('freshness') || 'pd'; // Last day by default
+    const type = searchParams.get('type') || 'news'; // 'news' or 'web'
 
-    const results = await searchNews(query, {
-      count,
-      freshness,
-      country: 'PL',
-      search_lang: 'pl'
-    });
+    const results = type === 'web'
+      ? await searchWeb(query, {
+          count: Math.min(count, 20), // Web search max 20
+          freshness,
+          country: 'PL',
+          search_lang: 'pl'
+        })
+      : await searchNews(query, {
+          count,
+          freshness,
+          country: 'PL',
+          search_lang: 'pl'
+        });
 
     return NextResponse.json({
       success: true,

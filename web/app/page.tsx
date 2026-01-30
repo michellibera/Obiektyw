@@ -14,7 +14,7 @@ export default function ManipulationAnalyzer() {
     async function fetchNews() {
       try {
         setLoading(true);
-        const response = await fetch('/api/news?q=Polska&count=20&freshness=pd');
+        const response = await fetch('/api/news?q=Polska&count=20&freshness=pw');
         const data = await response.json();
 
         if (!data.success) {

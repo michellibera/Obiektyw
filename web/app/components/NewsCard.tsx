@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { Story } from '../lib/newsData';
 import PercentageBar from './PercentageBar';
@@ -9,9 +10,29 @@ import Button from './Button';
 
 interface NewsCardProps {
   story: Story;
+  showCoverageBar?: boolean;
+  showNarrativeBar?: boolean;
+  source?: string;
+  sourceUrl?: string;
+  hideButton?: boolean;
 }
 
-export default function NewsCard({ story }: NewsCardProps) {
+export default function NewsCard({
+  story,
+  showCoverageBar = true,
+  showNarrativeBar = false,
+  source,
+  sourceUrl,
+  hideButton = false
+}: NewsCardProps) {
+  const router = useRouter();
+
+  const handleViewMore = () => {
+    // Save story to localStorage before navigation
+    localStorage.setItem('selectedNews', JSON.stringify(story));
+    router.push(`/news/${story.id}`);
+  };
+
   return (
     <div
       style={{
@@ -30,7 +51,8 @@ export default function NewsCard({ story }: NewsCardProps) {
               display: 'flex',
               alignItems: 'center',
               gap: '1rem',
-              marginBottom: '0.75rem'
+              marginBottom: '0.75rem',
+              flexWrap: 'wrap'
             }}>
               <div style={{
                 padding: '0.25rem 0.75rem',
@@ -50,6 +72,30 @@ export default function NewsCard({ story }: NewsCardProps) {
               }}>
                 {new Date(story.date).toLocaleDateString('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit' })}
               </div>
+              {source && (
+                <div style={{
+                  fontSize: '0.65rem',
+                  color: '#525252',
+                  fontWeight: '700'
+                }}>
+                  {sourceUrl ? (
+                    <a
+                      href={sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: '#0a0a0a',
+                        textDecoration: 'none',
+                        borderBottom: '1px solid #0a0a0a'
+                      }}
+                    >
+                      Źródło: {source}
+                    </a>
+                  ) : (
+                    `Źródło: ${source}`
+                  )}
+                </div>
+              )}
             </div>
             <h2 style={{
               fontSize: '1.1rem',
@@ -64,40 +110,46 @@ export default function NewsCard({ story }: NewsCardProps) {
         </div>
 
         {/* Coverage Bar */}
-        <SegmentedBar
-          label="Pokrycie medialne:"
-          segments={[
-            { label: 'LEWICA', value: story.coverage.left, color: '#3b6fd1' },
-            { label: 'CENTRUM', value: story.coverage.center, color: '#6b4fa3' },
-            { label: 'PRAWICA', value: story.coverage.right, color: '#c92f35' }
-          ]}
-        />
+        {showCoverageBar && (
+          <SegmentedBar
+            label="Pokrycie medialne:"
+            segments={[
+              { label: 'LEWICA', value: story.coverage.left, color: '#3b6fd1' },
+              { label: 'CENTRUM', value: story.coverage.center, color: '#6b4fa3' },
+              { label: 'PRAWICA', value: story.coverage.right, color: '#c92f35' }
+            ]}
+          />
+        )}
       </div>
 
       {/* Narrative Creation Bar */}
-      {/* <div style={{ padding: '0 1rem' }}>
-        <PercentageBar
-          value={Math.round(Math.random() * 100)}
-          label="Poziom kreowania narracji:"
-        />
-      </div> */}
+      {showNarrativeBar && (
+        <div style={{ padding: '0 1rem' }}>
+          <PercentageBar
+            value={Math.round(Math.random() * 100)}
+            label="Poziom kreowania narracji:"
+          />
+        </div>
+      )}
 
       {/* Discrete button to view analysis */}
-      <div style={{
-        padding: '1.5rem 1rem 1rem 1rem',
-        display: 'flex',
-        justifyContent: 'center'
-      }}>
-        <Button
-          href={`/news/${story.id}`}
-          variant="outline"
-          icon={ArrowRight}
-          iconSize={14}
-          iconStrokeWidth={2}
-        >
-          Zobacz więcej
-        </Button>
-      </div>
+      {!hideButton && (
+        <div style={{
+          padding: '1.5rem 1rem 1rem 1rem',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <Button
+            onClick={handleViewMore}
+            variant="outline"
+            icon={ArrowRight}
+            iconSize={14}
+            iconStrokeWidth={2}
+          >
+            Zobacz więcej
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
