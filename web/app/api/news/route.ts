@@ -14,13 +14,15 @@ export async function GET(request: Request) {
           count: Math.min(count, 20), // Web search max 20
           freshness,
           country: 'PL',
-          search_lang: 'pl'
+          search_lang: 'pl',
+          extra_snippets: true
         })
       : await searchNews(query, {
           count,
           freshness,
           country: 'PL',
-          search_lang: 'pl'
+          search_lang: 'pl',
+          extra_snippets: true
         });
 
     return NextResponse.json({

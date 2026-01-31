@@ -14,24 +14,30 @@ export default function ManipulationAnalyzer() {
     async function fetchNews() {
       try {
         setLoading(true);
-        const response = await fetch('/api/news?q=Polska&count=20&freshness=pw');
+        const response = await fetch('/api/news?q=Polska&count=20&freshness=pd');
         const data = await response.json();
 
         if (!data.success) {
           throw new Error(data.error || 'Failed to fetch news');
         }
 
-        // Map Brave results to Story structure (only title for now)
-        const mappedStories: Story[] = data.results.map((result: BraveSearchResult, index: number) => ({
-          id: index + 1,
-          title: result.title,
-          category: 'Wiadomości',
-          categoryColor: '#525252',
-          date: new Date().toISOString(),
-          coverage: { left: 0, center: 0, right: 0 },
-          blindSpots: [],
-          articles: []
-        }));
+        const mappedStories: Story[] = data.results.map((result: BraveSearchResult, index: number) => {
+          const snippets = result.extra_snippets && result.extra_snippets.length > 0
+            ? result.extra_snippets
+            : (result.description ? [result.description] : []);
+
+          return {
+            id: index + 1,
+            title: result.title,
+            category: 'Wiadomości',
+            categoryColor: '#525252',
+            date: new Date().toISOString(),
+            coverage: { left: 0, center: 0, right: 0 },
+            blindSpots: [],
+            articles: [],
+            originalSnippets: snippets
+          };
+        });
 
         setStories(mappedStories);
       } catch (err) {

@@ -17,7 +17,7 @@ export const env = {
   anthropic: {
     apiKey: getEnvVariable('ANTHROPIC_API_KEY'),
     apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-haiku-4-5-20251001',
     version: '2023-06-01',
   },
   brave: {

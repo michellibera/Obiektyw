@@ -17,6 +17,8 @@ export interface Story {
   coverage: { left: number; center: number; right: number };
   blindSpots: string[];
   articles: Article[];
+  enhancedQuery?: string;      // Claude-generated search query
+  originalSnippets?: string[]; // Store extra_snippets for later use
 }
 
 export const SAMPLE_STORIES: Story[] = [

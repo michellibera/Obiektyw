@@ -28,7 +28,6 @@ export default function NewsCard({
   const router = useRouter();
 
   const handleViewMore = () => {
-    // Save story to localStorage before navigation
     localStorage.setItem('selectedNews', JSON.stringify(story));
     router.push(`/news/${story.id}`);
   };

@@ -32,9 +32,35 @@ export default function NewsDetailPage() {
         const story: Story = JSON.parse(storedNews);
         setSelectedNews(story);
 
-        // Search for related articles using web search (not news search) - ONLY ONE API CALL
+        let searchQuery = story.enhancedQuery;
+
+        if (!searchQuery && story.originalSnippets?.length) {
+          try {
+            const enhanceResponse = await fetch('/api/enhance-query', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: story.title,
+                snippets: story.originalSnippets
+              })
+            });
+
+            const enhanceData = await enhanceResponse.json();
+
+            if (enhanceData.success && enhanceData.enhancedQuery) {
+              searchQuery = enhanceData.enhancedQuery;
+              story.enhancedQuery = searchQuery;
+              localStorage.setItem('selectedNews', JSON.stringify(story));
+            }
+          } catch (error) {
+            console.error('Failed to enhance query:', error);
+          }
+        }
+
+        searchQuery = searchQuery || story.title;
+
         const searchResponse = await fetch(
-          `/api/news?type=web&q=${encodeURIComponent(story.title)}&count=10&freshness=pw`
+          `/api/news?type=web&q=${encodeURIComponent(searchQuery)}&count=10&freshness=pw`
         );
         const searchData = await searchResponse.json();
 

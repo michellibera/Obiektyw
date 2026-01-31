@@ -71,3 +71,30 @@ export async function sendPrompt(
   const response = await sendMessage(messages, options);
   return response.content[0].text;
 }
+
+/**
+ * Generate an enhanced search query using Claude
+ * @param title - News article title
+ * @param snippets - Additional context snippets
+ * @returns Enhanced search query
+ */
+export async function generateEnhancedQuery(
+  title: string,
+  snippets: string[]
+): Promise<string> {
+  const snippetText = snippets.join(' ');
+
+  const prompt = `Na podstawie tego tytułu wiadomości i kluczowych informacji, wygeneruj zwięzłe zapytanie wyszukiwania (3-7 słów po polsku), które oddaje główny temat.
+
+Tytuł: ${title}
+Kluczowe informacje: ${snippetText}
+
+Zwróć TYLKO zapytanie wyszukiwania.`;
+
+  const response = await sendPrompt(prompt, {
+    max_tokens: 50,
+    temperature: 0.3
+  });
+
+  return response.trim().replace(/^["']|["']$/g, '');
+}
