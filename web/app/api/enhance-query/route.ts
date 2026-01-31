@@ -1,16 +1,24 @@
 import { NextResponse } from 'next/server';
 import { sendPrompt } from '@/lib/services/claude';
+import { EnhanceQuerySchema } from '@/lib/schemas';
 
 export async function POST(request: Request) {
   try {
-    const { title, snippets } = await request.json();
+    const body = await request.json();
+    const validation = EnhanceQuerySchema.safeParse(body);
 
-    if (!title) {
+    if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Title is required' },
+        {
+          success: false,
+          error: 'Invalid request body',
+          details: validation.error.flatten()
+        },
         { status: 400 }
       );
     }
+
+    const { title, snippets } = validation.data;
 
     const snippetText = (snippets || []).join(' ');
     const prompt = `Na podstawie tego tytułu wiadomości i kluczowych informacji, wygeneruj zwięzłe zapytanie wyszukiwania (3-7 słów po polsku), które oddaje główny temat i pomoże znaleźć tematycznie powiązane artykuły.

@@ -1,25 +1,27 @@
 import { NextResponse } from 'next/server';
 import { sendPrompt } from '@/lib/services/claude';
-
-interface Article {
-  title: string;
-  content: string;
-  url: string;
-}
+import { SummarizeNewsSchema, type SummarizeNewsInput } from '@/lib/schemas';
 
 export async function POST(request: Request) {
   try {
-    const { articles } = await request.json();
+    const body = await request.json();
+    const validation = SummarizeNewsSchema.safeParse(body);
 
-    if (!articles || !Array.isArray(articles) || articles.length === 0) {
+    if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Articles array is required' },
+        {
+          success: false,
+          error: 'Invalid request body',
+          details: validation.error.flatten()
+        },
         { status: 400 }
       );
     }
 
+    const { articles } = validation.data;
+
     const articlesContent = articles
-      .map((article: Article, index: number) => {
+      .map((article, index: number) => {
         const prefix = index === 0 ? 'Główny artykuł' : `Powiązany artykuł ${index}`;
         return `${prefix}: "${article.title}"\n\nTreść:\n${article.content}`;
       })

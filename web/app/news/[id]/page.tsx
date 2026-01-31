@@ -7,12 +7,19 @@ import { ArrowLeft } from 'lucide-react';
 import NewsCard from '../../components/NewsCard';
 import type { BraveSearchResult } from '../../lib/types/brave';
 import { Story } from '../../lib/newsData';
+import { useNews } from '@/context/NewsContext';
+import { useEnhanceQuery, useFetchContent, useSummarize } from '@/hooks';
 
 export default function NewsDetailPage() {
   const params = useParams();
   const id = Number(params.id);
 
-  const [selectedNews, setSelectedNews] = useState<Story | null>(null);
+  const { selectedStory, setSelectedStory } = useNews();
+  const { enhance } = useEnhanceQuery();
+  const { fetch: fetchContent } = useFetchContent();
+  const { summarize } = useSummarize();
+
+  const [selectedNews, setSelectedNews] = useState<Story | null>(selectedStory);
   const [searchResults, setSearchResults] = useState<BraveSearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,35 +31,27 @@ export default function NewsDetailPage() {
       try {
         setLoading(true);
 
-        // Get story from localStorage
-        const storedNews = localStorage.getItem('selectedNews');
+        let story = selectedStory;
 
-        if (!storedNews) {
+        if (!story) {
           throw new Error('News data not found. Please select a news from the main page.');
         }
 
-        const story: Story = JSON.parse(storedNews);
         setSelectedNews(story);
 
         let searchQuery = story.enhancedQuery;
 
         if (!searchQuery && story.originalSnippets?.length) {
           try {
-            const enhanceResponse = await fetch('/api/enhance-query', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                title: story.title,
-                snippets: story.originalSnippets
-              })
+            const enhancedQuery = await enhance({
+              title: story.title,
+              snippets: story.originalSnippets
             });
 
-            const enhanceData = await enhanceResponse.json();
-
-            if (enhanceData.success && enhanceData.enhancedQuery) {
-              searchQuery = enhanceData.enhancedQuery;
-              story.enhancedQuery = searchQuery;
-              localStorage.setItem('selectedNews', JSON.stringify(story));
+            if (enhancedQuery) {
+              searchQuery = enhancedQuery;
+              story = { ...story, enhancedQuery: searchQuery };
+              setSelectedStory(story);
             }
           } catch (error) {
             console.error('Failed to enhance query:', error);
@@ -80,7 +79,7 @@ export default function NewsDetailPage() {
     }
 
     fetchData();
-  }, [id]);
+  }, [id, selectedStory, enhance, setSelectedStory]);
 
   useEffect(() => {
     async function generateSummary() {
@@ -100,47 +99,30 @@ export default function NewsDetailPage() {
       try {
         const articleUrls = searchResults.slice(0, 10).map(r => r.url);
 
-        const fetchPromises = articleUrls.map(async (url) => {
-          try {
-            const response = await fetch('/api/fetch-content', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ url })
+        const articles = [];
+        for (const url of articleUrls) {
+          const content = await fetchContent(url);
+          if (content) {
+            articles.push({
+              title: searchResults.find(r => r.url === url)?.title || '',
+              content: content.content,
+              url
             });
-            const data = await response.json();
-            if (data.success) {
-              return {
-                title: searchResults.find(r => r.url === url)?.title || '',
-                content: data.content,
-                url
-              };
-            }
-          } catch (error) {
-            console.error(`Failed to fetch ${url}:`, error);
           }
-          return null;
-        });
-
-        const articles = (await Promise.all(fetchPromises)).filter(a => a !== null);
+        }
 
         if (articles.length > 0) {
-          const summaryResponse = await fetch('/api/summarize-news', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ articles })
-          });
+          const summaryText = await summarize(articles);
 
-          const summaryData = await summaryResponse.json();
-
-          if (summaryData.success) {
-            setSummary(summaryData.summary);
+          if (summaryText) {
+            setSummary(summaryText);
 
             const updatedStory = {
               ...selectedNews,
-              summary: summaryData.summary,
+              summary: summaryText,
               summaryGeneratedAt: new Date().toISOString()
             };
-            localStorage.setItem('selectedNews', JSON.stringify(updatedStory));
+            setSelectedStory(updatedStory);
           }
         }
       } catch (error) {
@@ -151,7 +133,7 @@ export default function NewsDetailPage() {
     }
 
     generateSummary();
-  }, [selectedNews, searchResults]);
+  }, [selectedNews, searchResults, fetchContent, summarize, setSelectedStory]);
 
   if (loading) {
     return (

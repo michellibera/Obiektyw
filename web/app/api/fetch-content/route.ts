@@ -1,16 +1,24 @@
 import { NextResponse } from 'next/server';
+import { FetchContentSchema } from '@/lib/schemas';
 
 export async function POST(request: Request) {
   try {
     const { extractContent } = await import('@/lib/utils/content-extractor');
-    const { url } = await request.json();
+    const body = await request.json();
+    const validation = FetchContentSchema.safeParse(body);
 
-    if (!url) {
+    if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'URL is required' },
+        {
+          success: false,
+          error: 'Invalid request body',
+          details: validation.error.flatten()
+        },
         { status: 400 }
       );
     }
+
+    const { url } = validation.data;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);

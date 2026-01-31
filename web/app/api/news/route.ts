@@ -1,23 +1,35 @@
 import { NextResponse } from 'next/server';
 import { searchNews, searchWeb } from '@/lib/services/brave';
+import { NewsSearchParamsSchema } from '@/lib/schemas';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q') || 'Polska';
-    const count = parseInt(searchParams.get('count') || '20');
-    const freshness = searchParams.get('freshness') || 'pd'; // Last day by default
-    const type = searchParams.get('type') || 'news'; // 'news' or 'web'
+    const params = Object.fromEntries(searchParams);
+
+    const validation = NewsSearchParamsSchema.safeParse(params);
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid parameters',
+          details: validation.error.flatten()
+        },
+        { status: 400 }
+      );
+    }
+
+    const { q, count, freshness, type } = validation.data;
 
     const results = type === 'web'
-      ? await searchWeb(query, {
-          count: Math.min(count, 20), // Web search max 20
+      ? await searchWeb(q, {
+          count: Math.min(count, 20),
           freshness,
           country: 'PL',
           search_lang: 'pl',
           extra_snippets: true
         })
-      : await searchNews(query, {
+      : await searchNews(q, {
           count,
           freshness,
           country: 'PL',

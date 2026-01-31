@@ -7,6 +7,8 @@ import { Story } from '../lib/newsData';
 import PercentageBar from './PercentageBar';
 import SegmentedBar from './SegmentedBar';
 import Button from './Button';
+import { useNews } from '../context/NewsContext';
+import { NewsHeader } from './molecules';
 
 interface NewsCardProps {
   story: Story;
@@ -26,9 +28,10 @@ export default function NewsCard({
   hideButton = false
 }: NewsCardProps) {
   const router = useRouter();
+  const { setSelectedStory } = useNews();
 
   const handleViewMore = () => {
-    localStorage.setItem('selectedNews', JSON.stringify(story));
+    setSelectedStory(story);
     router.push(`/news/${story.id}`);
   };
 
@@ -46,56 +49,12 @@ export default function NewsCard({
       <div style={{ padding: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
           <div style={{ flex: 1 }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-              marginBottom: '0.75rem',
-              flexWrap: 'wrap'
-            }}>
-              <div style={{
-                padding: '0.25rem 0.75rem',
-                background: '#0a0a0a',
-                borderRadius: '0',
-                fontSize: '0.65rem',
-                fontWeight: '700',
-                color: '#ffffff',
-                letterSpacing: '0.05em'
-              }}>
-                {story.category}
-              </div>
-              <div style={{
-                fontSize: '0.65rem',
-                color: '#525252',
-                fontWeight: '600'
-              }}>
-                {new Date(story.date).toLocaleDateString('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit' })}
-              </div>
-              {source && (
-                <div style={{
-                  fontSize: '0.65rem',
-                  color: '#525252',
-                  fontWeight: '700'
-                }}>
-                  {sourceUrl ? (
-                    <a
-                      href={sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: '#0a0a0a',
-                        textDecoration: 'none',
-                        borderBottom: '1px solid #0a0a0a'
-                      }}
-                    >
-                      Źródło: {source}
-                    </a>
-                  ) : (
-                    `Źródło: ${source}`
-                  )}
-                </div>
-              )}
-            </div>
+            <NewsHeader
+              category={story.category}
+              date={story.date}
+              source={source}
+              sourceUrl={sourceUrl}
+            />
             <h2 style={{
               fontSize: '1.1rem',
               fontWeight: '900',
