@@ -16,6 +16,8 @@ export default function NewsDetailPage() {
   const [searchResults, setSearchResults] = useState<BraveSearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -79,6 +81,77 @@ export default function NewsDetailPage() {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    async function generateSummary() {
+      if (!selectedNews || !searchResults.length) return;
+
+      const CACHE_DURATION = 24 * 60 * 60 * 1000;
+      if (selectedNews.summary && selectedNews.summaryGeneratedAt) {
+        const age = Date.now() - new Date(selectedNews.summaryGeneratedAt).getTime();
+        if (age < CACHE_DURATION) {
+          setSummary(selectedNews.summary);
+          return;
+        }
+      }
+
+      setSummaryLoading(true);
+
+      try {
+        const articleUrls = searchResults.slice(0, 10).map(r => r.url);
+
+        const fetchPromises = articleUrls.map(async (url) => {
+          try {
+            const response = await fetch('/api/fetch-content', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url })
+            });
+            const data = await response.json();
+            if (data.success) {
+              return {
+                title: searchResults.find(r => r.url === url)?.title || '',
+                content: data.content,
+                url
+              };
+            }
+          } catch (error) {
+            console.error(`Failed to fetch ${url}:`, error);
+          }
+          return null;
+        });
+
+        const articles = (await Promise.all(fetchPromises)).filter(a => a !== null);
+
+        if (articles.length > 0) {
+          const summaryResponse = await fetch('/api/summarize-news', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ articles })
+          });
+
+          const summaryData = await summaryResponse.json();
+
+          if (summaryData.success) {
+            setSummary(summaryData.summary);
+
+            const updatedStory = {
+              ...selectedNews,
+              summary: summaryData.summary,
+              summaryGeneratedAt: new Date().toISOString()
+            };
+            localStorage.setItem('selectedNews', JSON.stringify(updatedStory));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to generate summary:', error);
+      } finally {
+        setSummaryLoading(false);
+      }
+    }
+
+    generateSummary();
+  }, [selectedNews, searchResults]);
 
   if (loading) {
     return (
@@ -171,7 +244,7 @@ export default function NewsDetailPage() {
         Powrót
       </Link>
 
-      {/* Main Title */}
+      {/* Main Title and Summary */}
       <div style={{
         background: '#ffffff',
         border: '1.5px solid #525252',
@@ -181,13 +254,38 @@ export default function NewsDetailPage() {
         <h1 style={{
           fontSize: '1.5rem',
           fontWeight: '900',
-          margin: '0',
+          margin: '0 0 1rem 0',
           color: '#0a0a0a',
           letterSpacing: '-0.02em',
           lineHeight: '1.2'
         }}>
           {selectedNews.title}
         </h1>
+
+        {summaryLoading ? (
+          <div style={{
+            padding: '1rem',
+            background: '#f5f5f5',
+            borderLeft: '3px solid #525252',
+            fontSize: '0.95rem',
+            lineHeight: '1.6',
+            color: '#525252',
+            fontStyle: 'italic'
+          }}>
+            Generowanie streszczenia...
+          </div>
+        ) : summary ? (
+          <div style={{
+            padding: '1rem',
+            background: '#f5f5f5',
+            borderLeft: '3px solid #0a0a0a',
+            fontSize: '0.95rem',
+            lineHeight: '1.6',
+            color: '#0a0a0a'
+          }}>
+            {summary}
+          </div>
+        ) : null}
       </div>
 
       {/* Search Results */}

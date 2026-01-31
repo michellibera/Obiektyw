@@ -19,6 +19,8 @@ export interface Story {
   articles: Article[];
   enhancedQuery?: string;      // Claude-generated search query
   originalSnippets?: string[]; // Store extra_snippets for later use
+  summary?: string;            // AI-generated summary
+  summaryGeneratedAt?: string; // Timestamp for cache invalidation
 }
 
 export const SAMPLE_STORIES: Story[] = [
