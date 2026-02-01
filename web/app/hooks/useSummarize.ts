@@ -8,11 +8,16 @@ interface Article {
   url: string;
 }
 
+interface SummarizeResult {
+  title: string;
+  summary: string;
+}
+
 export function useSummarize() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const summarize = async (articles: Article[]): Promise<string | null> => {
+  const summarize = async (articles: Article[]): Promise<SummarizeResult | null> => {
     if (!articles.length) return null;
 
     try {
@@ -31,7 +36,10 @@ export function useSummarize() {
         throw new Error(data.error || 'Failed to generate summary');
       }
 
-      return data.summary;
+      return {
+        title: data.title || '',
+        summary: data.summary || ''
+      };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
