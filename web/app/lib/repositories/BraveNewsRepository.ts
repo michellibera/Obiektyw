@@ -10,7 +10,6 @@ export class BraveNewsRepository implements NewsRepository {
     return searchNews(query, {
       count: options?.count,
       freshness: options?.freshness,
-      spellcheck: true,
       extra_snippets: true
     });
   }
@@ -22,7 +21,6 @@ export class BraveNewsRepository implements NewsRepository {
     return searchWeb(query, {
       count: options?.count,
       freshness: options?.freshness,
-      spellcheck: true,
       extra_snippets: true
     });
   }
