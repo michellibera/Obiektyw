@@ -12,7 +12,7 @@ export function useFetchContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetch = async (url: string): Promise<FetchedContent | null> => {
+  const fetchContent = async (url: string): Promise<FetchedContent | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -44,5 +44,5 @@ export function useFetchContent() {
     }
   };
 
-  return { fetch, loading, error };
+  return { fetchContent, loading, error };
 }

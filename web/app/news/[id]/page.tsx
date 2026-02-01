@@ -16,7 +16,7 @@ export default function NewsDetailPage() {
 
   const { selectedStory, setSelectedStory } = useNews();
   const { enhance } = useEnhanceQuery();
-  const { fetch: fetchContent } = useFetchContent();
+  const { fetchContent } = useFetchContent();
   const { summarize } = useSummarize();
 
   const [selectedNews, setSelectedNews] = useState<Story | null>(selectedStory);
@@ -78,8 +78,10 @@ export default function NewsDetailPage() {
       }
     }
 
-    fetchData();
-  }, [id, selectedStory, enhance, setSelectedStory]);
+    if (selectedStory) {
+      fetchData();
+    }
+  }, [id]);
 
   useEffect(() => {
     async function generateSummary() {
@@ -133,7 +135,7 @@ export default function NewsDetailPage() {
     }
 
     generateSummary();
-  }, [selectedNews, searchResults, fetchContent, summarize, setSelectedStory]);
+  }, [selectedNews, searchResults]);
 
   if (loading) {
     return (
