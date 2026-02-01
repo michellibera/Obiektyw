@@ -24,6 +24,7 @@ export default function NewsDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
+  const [generatedTitle, setGeneratedTitle] = useState<string | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
@@ -114,14 +115,15 @@ export default function NewsDetailPage() {
         }
 
         if (articles.length > 0) {
-          const summaryText = await summarize(articles);
+          const result = await summarize(articles);
 
-          if (summaryText) {
-            setSummary(summaryText);
+          if (result) {
+            setSummary(result.summary);
+            setGeneratedTitle(result.title);
 
             const updatedStory = {
               ...selectedNews,
-              summary: summaryText,
+              summary: result.summary,
               summaryGeneratedAt: new Date().toISOString()
             };
             setSelectedStory(updatedStory);
@@ -243,7 +245,7 @@ export default function NewsDetailPage() {
           letterSpacing: '-0.02em',
           lineHeight: '1.2'
         }}>
-          {selectedNews.title}
+          {generatedTitle}
         </h1>
 
         {summaryLoading ? (
@@ -256,7 +258,7 @@ export default function NewsDetailPage() {
             color: '#525252',
             fontStyle: 'italic'
           }}>
-            Generowanie streszczenia...
+            Generowanie streszczenia i tytułu...
           </div>
         ) : summary ? (
           <div style={{
@@ -267,7 +269,7 @@ export default function NewsDetailPage() {
             lineHeight: '1.6',
             color: '#0a0a0a'
           }}>
-            {summary}
+            {summary.replace(/^#streszczenie\s*/i, '').trim()}
           </div>
         ) : null}
       </div>

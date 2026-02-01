@@ -14,6 +14,7 @@ export type SummarizeNewsInput = z.infer<typeof SummarizeNewsSchema>;
 
 export const SummarizeNewsResponseSchema = z.object({
   success: z.boolean(),
+  title: z.string().optional(),
   summary: z.string().optional(),
   error: z.string().optional()
 });
