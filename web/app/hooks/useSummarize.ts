@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { DetailedAnalysis } from '@/lib/schemas';
 
 interface Article {
   title: string;
@@ -11,13 +12,17 @@ interface Article {
 interface SummarizeResult {
   title: string;
   summary: string;
+  analysis?: DetailedAnalysis | null;
 }
 
 export function useSummarize() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const summarize = async (articles: Article[]): Promise<SummarizeResult | null> => {
+  const summarize = async (
+    articles: Article[],
+    searchPhrase?: string
+  ): Promise<SummarizeResult | null> => {
     if (!articles.length) return null;
 
     try {
@@ -27,7 +32,7 @@ export function useSummarize() {
       const response = await fetch('/api/summarize-news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ articles })
+        body: JSON.stringify({ articles, searchPhrase })
       });
 
       const data = await response.json();
@@ -38,7 +43,8 @@ export function useSummarize() {
 
       return {
         title: data.title || '',
-        summary: data.summary || ''
+        summary: data.summary || '',
+        analysis: data.analysis || null
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';

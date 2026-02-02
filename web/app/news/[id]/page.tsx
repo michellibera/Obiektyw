@@ -5,10 +5,12 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import NewsCard from '../../components/NewsCard';
+import AnalysisDisplay from '../../components/AnalysisDisplay';
 import type { BraveSearchResult } from '../../lib/types/brave';
 import { Story } from '../../lib/newsData';
 import { useNews } from '@/context/NewsContext';
 import { useEnhanceQuery, useFetchContent, useSummarize } from '@/hooks';
+import type { DetailedAnalysis } from '@/lib/schemas';
 
 export default function NewsDetailPage() {
   const params = useParams();
@@ -25,6 +27,7 @@ export default function NewsDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [generatedTitle, setGeneratedTitle] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<DetailedAnalysis | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
@@ -115,11 +118,13 @@ export default function NewsDetailPage() {
         }
 
         if (articles.length > 0) {
-          const result = await summarize(articles);
+          const searchQuery = selectedNews.enhancedQuery || selectedNews.title;
+          const result = await summarize(articles, searchQuery);
 
           if (result) {
             setSummary(result.summary);
             setGeneratedTitle(result.title);
+            setAnalysis(result.analysis || null);
 
             const updatedStory = {
               ...selectedNews,
@@ -274,11 +279,17 @@ export default function NewsDetailPage() {
         ) : null}
       </div>
 
+      {/* Detailed Analysis */}
+      {analysis && !summaryLoading && (
+        <AnalysisDisplay analysis={analysis} />
+      )}
+
       {/* Search Results */}
       <h2 style={{
         fontSize: '1.5rem',
         fontWeight: '900',
         marginBottom: '1rem',
+        marginTop: '2rem',
         color: '#0a0a0a'
       }}>
         Powiązane artykuły ({searchResults.length})
