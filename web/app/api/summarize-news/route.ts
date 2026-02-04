@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { sendPrompt } from '@/lib/services/llm';
 import { SummarizeNewsSchema, type SummarizeNewsInput } from '@/lib/schemas';
+import { env } from '@/lib/config/env';
+import { mockSummarizeNewsResult } from '@/lib/mocks/analysis';
 
 export async function POST(request: Request) {
   try {
@@ -20,6 +22,16 @@ export async function POST(request: Request) {
 
     const { articles, searchPhrase } = validation.data;
     const currentDate = new Date().toISOString();
+
+    if (env.features.useMockAnalysis) {
+      console.log('[MOCK MODE] Returning mock analysis data instead of calling LLM');
+      return NextResponse.json({
+        success: true,
+        title: mockSummarizeNewsResult.title,
+        summary: mockSummarizeNewsResult.summary,
+        analysis: mockSummarizeNewsResult.analysis
+      });
+    }
 
     const articlesJson = JSON.stringify(
       articles.map((article, index) => ({

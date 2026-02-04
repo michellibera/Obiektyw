@@ -44,6 +44,7 @@ export const env = {
   },
   features: {
     useMockNews: getEnvVariable('USE_MOCK_NEWS', false) === 'true',
+    useMockAnalysis: getEnvVariable('USE_MOCK_ANALYSIS', false) === 'true',
   },
 } as const;
 
