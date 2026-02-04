@@ -201,7 +201,7 @@ export default function NewsDetailPage() {
     <div style={{
       maxWidth: '1200px',
       margin: '0 auto',
-      padding: '2rem 1rem'
+      padding: '0.5rem 1rem'
     }}>
       {/* Back Button */}
       <Link
@@ -217,7 +217,7 @@ export default function NewsDetailPage() {
           textDecoration: 'none',
           fontSize: '0.75rem',
           fontWeight: '600',
-          marginBottom: '1.5rem',
+          marginBottom: '2rem',
           transition: 'all 0.2s ease'
         }}
         onMouseOver={(e) => {
@@ -238,8 +238,6 @@ export default function NewsDetailPage() {
       {/* Main Title and Summary */}
       <div style={{
         background: '#ffffff',
-        border: '1.5px solid #525252',
-        padding: '2rem',
         marginBottom: '2rem'
       }}>
         <h1 style={{
@@ -256,20 +254,15 @@ export default function NewsDetailPage() {
         {summaryLoading ? (
           <div style={{
             padding: '1rem',
-            background: '#f5f5f5',
-            borderLeft: '3px solid #525252',
             fontSize: '0.95rem',
             lineHeight: '1.6',
             color: '#525252',
             fontStyle: 'italic'
           }}>
-            Generowanie streszczenia i tytułu...
+            Generowanie analizy...
           </div>
         ) : summary ? (
           <div style={{
-            padding: '1rem',
-            background: '#f5f5f5',
-            borderLeft: '3px solid #0a0a0a',
             fontSize: '0.95rem',
             lineHeight: '1.6',
             color: '#0a0a0a'
@@ -284,63 +277,7 @@ export default function NewsDetailPage() {
         <AnalysisDisplay analysis={analysis} />
       )}
 
-      {/* Search Results */}
-      <h2 style={{
-        fontSize: '1.5rem',
-        fontWeight: '900',
-        marginBottom: '1rem',
-        marginTop: '2rem',
-        color: '#0a0a0a'
-      }}>
-        Powiązane artykuły ({searchResults.length})
-      </h2>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {searchResults.length === 0 ? (
-          <div style={{
-            background: '#ffffff',
-            border: '1.5px solid #525252',
-            padding: '2rem',
-            textAlign: 'center',
-            color: '#525252'
-          }}>
-            Nie znaleziono powiązanych artykułów
-          </div>
-        ) : (
-          searchResults.map((result, index) => {
-            const story: Story = {
-              id: index,
-              title: result.title,
-              category: 'Wiadomości',
-              categoryColor: '#525252',
-              date: new Date().toISOString(),
-              coverage: { left: 0, center: 0, right: 0 },
-              blindSpots: [],
-              articles: []
-            };
-
-            return (
-              <React.Fragment key={index}>
-                <NewsCard
-                  story={story}
-                  showCoverageBar={false}
-                  showNarrativeBar={true}
-                  source={result.profile?.name}
-                  sourceUrl={result.url}
-                  hideButton={true}
-                />
-                {index < searchResults.length - 1 && (
-                  <hr style={{
-                    border: 'none',
-                    borderTop: '1.5px solid #525252',
-                    margin: '0'
-                  }} />
-                )}
-              </React.Fragment>
-            );
-          })
-        )}
-      </div>
+      {/* Search Results removed */}
     </div>
   );
 }
