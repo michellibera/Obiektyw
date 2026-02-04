@@ -4,4 +4,5 @@
  */
 
 export * from './claude';
+export * from './llm';
 export * from './brave';

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sendPrompt } from '@/lib/services/claude';
+import { sendPrompt } from '@/lib/services/llm';
 import { EnhanceQuerySchema } from '@/lib/schemas';
 
 export async function POST(request: Request) {
