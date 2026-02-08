@@ -129,6 +129,10 @@ export default function NewsDetailPage() {
         setLoading(true);
         setError(null);
 
+        if (!id) {
+          throw new Error('Brak identyfikatora newsa');
+        }
+
         const response = await fetch(`/api/topics/${encodeURIComponent(id)}`);
         const data: TopicDetailResponse = await response.json();
 

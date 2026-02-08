@@ -260,7 +260,7 @@ export async function POST(request: Request) {
         data: {
           objectiveTitle: analysis.title,
           summary: analysis.summary,
-          analysisJson: analysis.analysis,
+          analysisJson: analysis.analysis ?? undefined,
           lastUpdatedAt: new Date(),
         },
       });
