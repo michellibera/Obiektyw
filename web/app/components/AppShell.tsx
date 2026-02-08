@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { href: '/', label: 'Wiadomosci' },
+  { href: '/', label: 'Wiadomości' },
   { href: '/na-czasie', label: 'Na czasie' },
   { href: '/o-nas', label: 'O nas' },
 ];
