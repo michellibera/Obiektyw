@@ -244,30 +244,30 @@ export default function NewsDetailPage() {
     <div>
       <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '13px', marginBottom: '28px' }}>&larr; Wroc do listy</button>
 
-      <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '28px', fontWeight: 400, lineHeight: 1.3, marginBottom: '14px' }}>{mappedAnalysis.title}</h1>
-      <p style={{ color: 'var(--muted)', fontSize: '15px', lineHeight: 1.7, fontFamily: 'var(--font-serif)', marginBottom: '32px' }}>{mappedAnalysis.summary}</p>
+      <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '30px', fontWeight: 400, lineHeight: 1.3, marginBottom: '14px' }}>{mappedAnalysis.title}</h1>
+      <p style={{ fontSize: '20px', lineHeight: 1.7, fontFamily: 'var(--font-serif)', marginBottom: '32px' }}>{mappedAnalysis.summary}</p>
 
       <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px', marginBottom: '28px' }}>
         <div style={{ marginBottom: '28px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '10px' }}>Sredni wskaznik narracji</span>
+          <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '10px' }}>Sredni wskaznik narracji</span>
           <NarrativeBar value={mappedAnalysis.avgNarrative} />
         </div>
 
         <div style={{ height: '1px', background: 'var(--border)', margin: '0 0 24px' }} />
 
         <div style={{ marginBottom: '24px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>Orientacja polityczna zrodel</span>
+          <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>Orientacja polityczna zrodel</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {Object.entries(mappedAnalysis.orientationDistribution).map(([key, count]) => {
               const labelKey = normalizeOrientation(key);
               const info = POLITICAL_LABELS[labelKey];
               return info ? (
                 <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ width: '110px', fontSize: '12px', color: 'var(--muted)', textAlign: 'right' }}>{info.label}</span>
+                  <span style={{ width: '110px', fontSize: '12px', textAlign: 'right' }}>{info.label}</span>
                   <div style={{ flex: 1, height: '4px', background: 'var(--border)', borderRadius: '2px', overflow: 'hidden' }}>
                     <div style={{ width: `${(count / mappedAnalysis.articles.length) * 100}%`, height: '100%', background: info.color, borderRadius: '2px', transition: 'width 0.5s ease' }} />
                   </div>
-                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', color: 'var(--muted)', width: '16px' }}>{count}</span>
+                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', width: '16px' }}>{count}</span>
                 </div>
               ) : null;
             })}
@@ -277,7 +277,7 @@ export default function NewsDetailPage() {
         <div style={{ height: '1px', background: 'var(--border)', margin: '0 0 24px' }} />
 
         <div style={{ marginBottom: '24px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>Najczestsze techniki</span>
+          <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>Najczestsze techniki</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {mappedAnalysis.topTechniques.map(([id, count]) => {
               const t = MANIPULATION_TECHNIQUES[id];
@@ -288,7 +288,7 @@ export default function NewsDetailPage() {
                     <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: TECH_CAT_COLORS[t.category] }} />
                     <span style={{ fontSize: '13px', color: 'var(--fg)' }}>{t.namepl}</span>
                   </div>
-                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)' }}>{count}x</span>
+                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)' }}>{count}x</span>
                 </div>
               );
             })}
@@ -298,11 +298,11 @@ export default function NewsDetailPage() {
         <div style={{ height: '1px', background: 'var(--border)', margin: '0 0 24px' }} />
 
         <div>
-          <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>Ranking wiarygodnosci</span>
+          <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>Ranking wiarygodnosci</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {mappedAnalysis.credibilityRanking.map((article, index) => (
               <div key={`${article.source}-${index}`} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '11px', color: 'var(--subtle)', width: '18px' }}>{index + 1}.</span>
+                <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '11px', width: '18px' }}>{index + 1}.</span>
                 <span style={{ fontSize: '13px', flex: 1 }}>{article.source}</span>
                 <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '13px', fontWeight: 500, color: getNarrativeColor(article.narrativeIndex) }}>{article.narrativeIndex}%</span>
               </div>
@@ -312,7 +312,7 @@ export default function NewsDetailPage() {
       </div>
 
         <div style={{ borderTop: '2px solid var(--fg)', paddingTop: '24px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
             Analizowane artykuly ({mappedAnalysis.articles.length})
           </span>
           <div style={{ marginTop: '16px' }}>
@@ -328,7 +328,7 @@ export default function NewsDetailPage() {
                     onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   >
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
                         <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)' }}>{article.source}</span>
                         <span style={{ fontSize: '10px', fontWeight: 600, color: pol?.color, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{pol?.label}</span>
                         {article.neutralityBonus && <span style={{ fontSize: '10px', fontWeight: 600, color: '#1A7A3A' }}>&#9733; Neutralny</span>}

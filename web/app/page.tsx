@@ -31,9 +31,9 @@ export default function ObiektywHome() {
         <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '33px', fontWeight: 600, lineHeight: 1.2, marginBottom: '8px', color: 'var(--fg)' }}>
           Analiza polskich mediów i technik manipulacji
         </h1>
-        <p style={{ color: "var(--muted)", fontSize: "14px", lineHeight: 1.6, maxWidth: "460px" }}>
+        <p style={{ color: "var(--muted)", fontSize: "16px", lineHeight: 1.6 }}>
                 Sprawdź, jak różne źródła informują o tych samych wydarzeniach.
-              </p>
+        </p>
       </div>
 
       {loading && (
