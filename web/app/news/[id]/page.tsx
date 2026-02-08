@@ -333,7 +333,34 @@ export default function NewsDetailPage() {
                         <span style={{ fontSize: '10px', fontWeight: 600, color: pol?.color, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{pol?.label}</span>
                         {article.neutralityBonus && <span style={{ fontSize: '10px', fontWeight: 600, color: '#1A7A3A' }}>&#9733; Neutralny</span>}
                       </div>
-                      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '16px', fontWeight: 400, lineHeight: 1.35 }}>{article.title}</h3>
+                      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 400, lineHeight: 1.35 }}>{article.title}</h3>
+                      <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setExpandedArticle(isExpanded ? null : idx)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            color: 'var(--muted)',
+                            fontFamily: 'var(--font-archivo)',
+                            letterSpacing: '0.4px',
+                          }}
+                        >
+                          {isExpanded ? (
+                            <>
+                              <span>Zwiń</span>
+                              <span style={{ marginLeft: '6px', display: 'inline-block', transform: 'rotate(-90deg)' }}>&rarr;</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Pokaż szczegóły</span>
+                              <span style={{ marginLeft: '6px', display: 'inline-block', transform: 'rotate(90deg)' }}>&rarr;</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, marginTop: '6px' }}>
                       <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '18px', fontWeight: 500, color: getNarrativeColor(article.narrativeIndex) }}>{article.narrativeIndex}</span>
@@ -344,27 +371,30 @@ export default function NewsDetailPage() {
                   {isExpanded && (
                     <div style={{ paddingBottom: '24px', animation: 'fadeIn 0.25s ease' }}>
                       <div style={{ paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid var(--border)' }}>
-                        <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '8px' }}>Streszczenie</span>
-                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.8px', display: 'block', marginBottom: '10px' }}>Wydarzenia:</span>
+                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '18px' }}>
                           {article.summary.events.map((event, i) => (
-                            <span key={i} style={{ background: 'var(--hover)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '3px', fontSize: '11px', color: 'var(--muted)' }}>{event}</span>
+                            <span key={i} style={{ background: 'var(--hover)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '3px', fontSize: '11px' }}>{event}</span>
                           ))}
                         </div>
-                        <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '6px' }}>
+                        <p style={{ fontSize: '12px', marginBottom: '14px' }}>
                           <span style={{ fontWeight: 600, color: 'var(--fg)' }}>Uczestnicy: </span>{article.summary.participants.join(', ')}
                         </p>
-                        <p style={{ fontSize: '14px', color: 'var(--fg)', lineHeight: 1.6, fontFamily: 'var(--font-serif)' }}>{article.summary.conclusions}</p>
+                        <p style={{ fontSize: '12px', marginBottom: '6px' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--fg)' }}>Podsumowanie: </span>
+                        </p>
+                        <p style={{ fontSize: '16px', color: 'var(--fg)', lineHeight: 1.6, fontFamily: 'var(--font-serif)' }}>{article.summary.conclusions}</p>
                       </div>
 
                       <div style={{ paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid var(--border)' }}>
-                        <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '10px' }}>Wskaznik kreowania narracji</span>
+                        <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '10px' }}>Wskaznik kreowania narracji</span>
                         <div style={{ marginBottom: '14px' }}><NarrativeBar value={article.narrativeIndex} compact /></div>
                         <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
                           {[['Stronniczosc', article.biasComponent, '40%'], ['Sensacyjnosc', article.sensationalismComponent, '30%'], ['Odejscie od faktow', article.factDeviationComponent, '30%']].map(([label, value, weight], i) => (
-                            <div key={i} style={{ minWidth: '120px' }}>
+                            <div key={i} style={{ minWidth: '150px' }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                <span style={{ fontSize: '11px', color: 'var(--muted)' }}>{label}</span>
-                                <span style={{ fontSize: '10px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)' }}>waga {weight}</span>
+                                <span style={{ fontSize: '11px' }}>{label}</span>
+                                <span style={{ fontSize: '10px', fontFamily: 'var(--font-archivo)' }}>waga {weight}</span>
                               </div>
                               <span style={{ fontSize: '16px', fontFamily: 'var(--font-archivo)', fontWeight: 500, color: getNarrativeColor(value as number) }}>{value as number}</span>
                               <div style={{ width: '100%', height: '2px', background: 'var(--border)', borderRadius: '1px', marginTop: '3px' }}>
@@ -376,17 +406,17 @@ export default function NewsDetailPage() {
                       </div>
 
                       <div style={{ paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid var(--border)' }}>
-                        <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '8px' }}>Orientacja polityczna</span>
+                        <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '8px' }}>Orientacja polityczna</span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
                           <span style={{ fontSize: '13px', fontWeight: 600, color: pol?.color }}>{pol?.label}</span>
-                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)' }}>pewnosc: {article.politicalConfidence}%</span>
+                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-archivo)' }}>pewnosc: {article.politicalConfidence}%</span>
                         </div>
-                        <p style={{ fontSize: '13px', color: 'var(--muted)', lineHeight: 1.6 }}>{article.politicalJustification}</p>
+                        <p style={{ fontSize: '13px', lineHeight: 1.6 }}>{article.politicalJustification}</p>
                       </div>
 
                       {article.techniques.length > 0 && (
                         <div style={{ paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid var(--border)' }}>
-                          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>
+                          <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '12px' }}>
                             Wykryte techniki manipulacji ({article.techniques.length})
                           </span>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -396,16 +426,15 @@ export default function NewsDetailPage() {
                               return (
                                 <div key={`${tech.id}-${techIndex}`} style={{ paddingLeft: '12px', borderLeft: `2px solid ${catColor}` }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: '10px', fontFamily: 'var(--font-archivo)', color: catColor }}>{tech.id}</span>
                                     <span style={{ fontSize: '13px', fontWeight: 600 }}>{info?.namepl || tech.id}</span>
-                                    <span style={{ fontSize: '10px', color: 'var(--subtle)', textTransform: 'uppercase' }}>{info?.category || 'inne'}</span>
+                                    <span style={{ fontSize: '10px', textTransform: 'uppercase' }}>{info?.category || 'inne'}</span>
                                     <SeverityDot severity={tech.severity} />
-                                    <span style={{ fontSize: '10px', color: 'var(--muted)' }}>{tech.severity}</span>
+                                    <span style={{ fontSize: '10px' }}>{tech.severity}</span>
                                   </div>
-                                  <p style={{ fontSize: '13px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--muted)', lineHeight: 1.5, marginBottom: '4px' }}>
-                                    &ldquo;{tech.quote}&rdquo;
+                                  <p style={{ fontSize: '15px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', lineHeight: 1.5, marginBottom: '4px' }}>
+                                    {tech.quote}
                                   </p>
-                                  <p style={{ fontSize: '12px', color: 'var(--muted)', lineHeight: 1.5 }}>{tech.explanation}</p>
+                                  <p style={{ fontSize: '14px', lineHeight: 1.5 }}>{tech.explanation}</p>
                                 </div>
                               );
                             })}
@@ -414,8 +443,26 @@ export default function NewsDetailPage() {
                       )}
 
                       <div>
-                        <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--subtle)', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '6px' }}>Ocena ogolna</span>
+                        <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', display: 'block', marginBottom: '6px' }}>Ocena ogolna</span>
                         <p style={{ fontSize: '14px', color: 'var(--fg)', lineHeight: 1.7 }}>{article.overallAssessment}</p>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setExpandedArticle(null)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            color: 'var(--muted)',
+                            fontFamily: 'var(--font-archivo)',
+                            letterSpacing: '0.4px',
+                          }}
+                        >
+                          <span>zwin</span>
+                          <span style={{ marginLeft: '6px', display: 'inline-block', transform: 'rotate(-90deg)' }}>&rarr;</span>
+                        </button>
                       </div>
                     </div>
                   )}
