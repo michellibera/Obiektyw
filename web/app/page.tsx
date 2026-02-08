@@ -27,16 +27,13 @@ export default function ObiektywHome() {
   const { data: stories, loading, error } = useNewsFetch({ count: 20 });
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '32px', fontWeight: 600, lineHeight: 1.2, marginBottom: '8px', color: 'var(--fg)' }}>
-          Analiza polskich mediow i technik manipulacji
+      <div style={{ marginBottom: '48px' }}>
+        <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '33px', fontWeight: 600, lineHeight: 1.2, marginBottom: '8px', color: 'var(--fg)' }}>
+          Analiza polskich mediów i technik manipulacji
         </h1>
-      </div>
-
-      <div style={{ display: 'flex', gap: '14px', marginBottom: '24px', fontSize: '11px', color: 'var(--subtle)' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '1px', background: '#C23B3B' }} /> lewica</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '1px', background: '#999' }} /> centrum</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '1px', background: '#2E5A9E' }} /> prawica</span>
+        <p style={{ color: "var(--muted)", fontSize: "14px", lineHeight: 1.6, maxWidth: "460px" }}>
+                Sprawdź, jak różne źródła informują o tych samych wydarzeniach.
+              </p>
       </div>
 
       {loading && (
@@ -68,12 +65,15 @@ export default function ObiektywHome() {
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '10px' }}>
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '18px', fontWeight: 400, lineHeight: 1.35, flex: 1 }}>{story.title}</h3>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '18px', fontWeight: 400, lineHeight: 1.35, flex: 1 }}>
+                  {story.title}
+                  <span style={{ marginLeft: '10px', color: 'var(--subtle)', fontSize: '24px' }}>→</span>
+                </h3>
                 <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)', flexShrink: 0, marginTop: '4px' }}>
                   {story.date ? story.date.slice(0, 10) : ''}
                 </span>
               </div>
-              <CoverageBar left={story.coverage.left} center={story.coverage.center} right={story.coverage.right} />
+              {/* <CoverageBar left={story.coverage.left} center={story.coverage.center} right={story.coverage.right} /> */}
             </div>
           ))}
         </div>
