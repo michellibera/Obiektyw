@@ -1,6 +1,7 @@
 import { sendPrompt } from './llm';
 import { env } from '../config/env';
 import { mockSummarizeNewsResult } from '../mocks/analysis';
+import { DetailedAnalysisResponseSchema, type DetailedAnalysis } from '../schemas/summarizeNews';
 
 interface ArticleInput {
   title: string;
@@ -11,7 +12,7 @@ interface ArticleInput {
 interface AnalysisResult {
   title: string;
   summary: string;
-  analysis: unknown | null;
+  analysis: DetailedAnalysis | null;
 }
 
 export async function summarizeCluster(
@@ -135,6 +136,7 @@ Zwróć TYLKO poprawny JSON bez dodatkowych słów ani formatowania markdown.`;
   });
 
   let parsedResponse: { title?: string; summary?: string; analysis?: unknown };
+  let parsedAnalysis: DetailedAnalysis | null = null;
   try {
     const cleanedResponse = response
       .trim()
@@ -143,6 +145,10 @@ Zwróć TYLKO poprawny JSON bez dodatkowych słów ani formatowania markdown.`;
       .replace(/```\s*$/i, '')
       .trim();
     parsedResponse = JSON.parse(cleanedResponse);
+    if (parsedResponse.analysis) {
+      const analysisParse = DetailedAnalysisResponseSchema.safeParse(parsedResponse.analysis);
+      parsedAnalysis = analysisParse.success ? analysisParse.data : null;
+    }
   } catch {
     parsedResponse = {
       title: articles[0]?.title || 'Wiadomość',
@@ -154,6 +160,6 @@ Zwróć TYLKO poprawny JSON bez dodatkowych słów ani formatowania markdown.`;
   return {
     title: parsedResponse.title || '',
     summary: parsedResponse.summary || '',
-    analysis: parsedResponse.analysis ?? null,
+    analysis: parsedAnalysis,
   };
 }
