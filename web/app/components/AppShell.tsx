@@ -33,7 +33,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <header style={{ borderBottom: '1px solid var(--border)', background: 'rgba(250,250,248,0.9)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ maxWidth: '960px', margin: '0 auto', padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '22px', color: 'var(--fg)', fontWeight: 600 }}>Obiektyw</span>
+            <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '22px', color: 'var(--fg)', fontWeight: 600 }}>OBIEKTYW</span>
           </Link>
           <nav style={{ display: 'flex', gap: '2px' }}>
             {navItems.map(item => {
