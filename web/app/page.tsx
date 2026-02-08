@@ -1,56 +1,83 @@
 'use client';
 
 import React from 'react';
-import NewsCard from './components/NewsCard';
+import { useRouter } from 'next/navigation';
 import { useNewsFetch } from './hooks';
 
-export default function ManipulationAnalyzer() {
-  const { data: stories, loading, error } = useNewsFetch({
-    count: 20
-  });
-
-  if (loading) {
-    return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#525252' }}>
-        Ładowanie wiadomości...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#c92f35' }}>
-        Błąd: {error}
-      </div>
-    );
-  }
-
+function CoverageBar({ left, center, right }: { left: number; center: number; right: number }) {
+  const total = left + center + right || 1;
   return (
-    <>
-      {/* Stats Bar */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '1.5rem',
-        marginBottom: '2rem'
-      }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', height: '4px', borderRadius: '2px', overflow: 'hidden', flex: 1, background: 'var(--border)' }}>
+        <div style={{ width: `${(left / total) * 100}%`, background: '#C23B3B' }} />
+        <div style={{ width: `${(center / total) * 100}%`, background: '#999' }} />
+        <div style={{ width: `${(right / total) * 100}%`, background: '#2E5A9E' }} />
+      </div>
+      <div style={{ display: 'flex', gap: '10px', fontSize: '11px', fontFamily: 'var(--font-archivo)', color: 'var(--muted)' }}>
+        <span style={{ color: '#C23B3B' }}>{left}</span>
+        <span style={{ color: '#999' }}>{center}</span>
+        <span style={{ color: '#2E5A9E' }}>{right}</span>
+      </div>
+    </div>
+  );
+}
+
+export default function ObiektywHome() {
+  const router = useRouter();
+  const { data: stories, loading, error } = useNewsFetch({ count: 20 });
+  return (
+    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '32px', fontWeight: 600, lineHeight: 1.2, marginBottom: '8px', color: 'var(--fg)' }}>
+          Analiza polskich mediow i technik manipulacji
+        </h1>
       </div>
 
-      {/* Stories List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {stories.map((story, index) => (
-          <React.Fragment key={story.id}>
-            <NewsCard story={story} />
-            {index < stories.length - 1 && (
-              <hr style={{
-                border: 'none',
-                borderTop: '1.5px solid #525252',
-                margin: '0'
-              }} />
-            )}
-          </React.Fragment>
-        ))}
+      <div style={{ display: 'flex', gap: '14px', marginBottom: '24px', fontSize: '11px', color: 'var(--subtle)' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '1px', background: '#C23B3B' }} /> lewica</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '1px', background: '#999' }} /> centrum</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '6px', height: '6px', borderRadius: '1px', background: '#2E5A9E' }} /> prawica</span>
       </div>
-    </>
+
+      {loading && (
+        <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: '13px' }}>
+          Ladowanie tematow...
+        </div>
+      )}
+
+      {error && (
+        <div style={{ padding: '24px 0', color: '#C23B3B', fontSize: '13px' }}>
+          Blad: {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div style={{ borderTop: '1px solid var(--border)' }}>
+          {stories.map((story, i) => (
+            <div
+              key={story.id}
+              onClick={() => router.push(`/news/${story.id}`)}
+              style={{
+                padding: '20px 0',
+                borderBottom: '1px solid var(--border)',
+                cursor: 'pointer',
+                transition: 'background 0.15s',
+                animation: `fadeUp 0.3s ease ${i * 0.04}s both`,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--hover)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '10px' }}>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '18px', fontWeight: 400, lineHeight: 1.35, flex: 1 }}>{story.title}</h3>
+                <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)', flexShrink: 0, marginTop: '4px' }}>
+                  {story.date ? story.date.slice(0, 10) : ''}
+                </span>
+              </div>
+              <CoverageBar left={story.coverage.left} center={story.coverage.center} right={story.coverage.right} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

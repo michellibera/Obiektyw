@@ -2,18 +2,10 @@ import React from 'react';
 
 export default function NaCzasie() {
   return (
-    <div style={{
-      background: '#ffffff',
-      border: '1.5px solid #525252',
-      padding: '2rem',
-      marginBottom: '2rem'
-    }}>
-      <h2 style={{ fontSize: '1.75rem', fontWeight: '900', marginBottom: '1rem', color: '#0a0a0a' }}>
-        Na czasie
-      </h2>
-      <p style={{ fontSize: '0.95rem', color: '#525252', lineHeight: '1.6' }}>
-        Tutaj pojawią się najpopularniejsze i najgorętsze tematy analizowane przez nasze media w ostatnich dniach.
-      </p>
+    <div style={{ animation: 'fadeIn 0.3s ease', textAlign: 'center', padding: '80px 0' }}>
+      <span style={{ fontSize: '32px', opacity: 0.15 }}>&#9678;</span>
+      <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 400, margin: '16px 0 6px' }}>Na czasie</h2>
+      <p style={{ color: 'var(--subtle)', fontSize: '13px' }}>Trendy i analiza medialna w przygotowaniu.</p>
     </div>
   );
 }

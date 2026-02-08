@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
+import { Archivo, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import LayoutClient from "./components/LayoutClient";
 
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body
-        className={`${archivo.variable} antialiased`}
+        className={`${archivo.variable} ${instrumentSerif.variable} antialiased`}
       >
         <LayoutClient>{children}</LayoutClient>
       </body>
