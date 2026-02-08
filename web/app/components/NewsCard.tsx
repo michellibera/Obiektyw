@@ -7,7 +7,6 @@ import { Story } from '../lib/newsData';
 import PercentageBar from './PercentageBar';
 import SegmentedBar from './SegmentedBar';
 import Button from './Button';
-import { useNews } from '../context/NewsContext';
 import { NewsHeader } from './molecules';
 
 interface NewsCardProps {
@@ -28,10 +27,8 @@ export default function NewsCard({
   hideButton = false
 }: NewsCardProps) {
   const router = useRouter();
-  const { setSelectedStory } = useNews();
 
   const handleViewMore = () => {
-    setSelectedStory(story);
     router.push(`/news/${story.id}`);
   };
 

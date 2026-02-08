@@ -4,76 +4,46 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import NewsCard from '../../components/NewsCard';
 import AnalysisDisplay from '../../components/AnalysisDisplay';
-import type { BraveSearchResult } from '../../lib/types/brave';
-import { Story } from '../../lib/newsData';
-import { useNews } from '@/context/NewsContext';
-import { useEnhanceQuery, useFetchContent, useSummarize } from '@/hooks';
 import type { DetailedAnalysis } from '@/lib/schemas';
+
+interface TopicDetailResponse {
+  success: boolean;
+  error?: string;
+  topic?: {
+    id: string;
+    objectiveTitle: string;
+    summary: string;
+    analysis: DetailedAnalysis | null;
+  };
+}
 
 export default function NewsDetailPage() {
   const params = useParams();
-  const id = Number(params.id);
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const { selectedStory, setSelectedStory } = useNews();
-  const { enhance } = useEnhanceQuery();
-  const { fetchContent } = useFetchContent();
-  const { summarize } = useSummarize();
-
-  const [selectedNews, setSelectedNews] = useState<Story | null>(selectedStory);
-  const [searchResults, setSearchResults] = useState<BraveSearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [generatedTitle, setGeneratedTitle] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<DetailedAnalysis | null>(null);
-  const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
+        setError(null);
 
-        let story = selectedStory;
+        const response = await fetch(`/api/topics/${encodeURIComponent(id)}`);
+        const data: TopicDetailResponse = await response.json();
 
-        if (!story) {
-          throw new Error('News data not found. Please select a news from the main page.');
+        if (!data.success || !data.topic) {
+          throw new Error(data.error || 'Failed to fetch topic');
         }
 
-        setSelectedNews(story);
-
-        let searchQuery = story.enhancedQuery;
-
-        if (!searchQuery && story.originalSnippets?.length) {
-          try {
-            const enhancedQuery = await enhance({
-              title: story.title,
-              snippets: story.originalSnippets
-            });
-
-            if (enhancedQuery) {
-              searchQuery = enhancedQuery;
-              story = { ...story, enhancedQuery: searchQuery };
-              setSelectedStory(story);
-            }
-          } catch (error) {
-            console.error('Failed to enhance query:', error);
-          }
-        }
-
-        searchQuery = searchQuery || story.title;
-
-        const searchResponse = await fetch(
-          `/api/news?type=web&q=${encodeURIComponent(searchQuery)}&count=10&freshness=pw`
-        );
-        const searchData = await searchResponse.json();
-
-        if (!searchData.success) {
-          throw new Error(searchData.error || 'Failed to search news');
-        }
-
-        setSearchResults(searchData.results);
+        setGeneratedTitle(data.topic.objectiveTitle || '');
+        setSummary(data.topic.summary || '');
+        setAnalysis(data.topic.analysis || null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
         console.error('Error fetching news details:', err);
@@ -82,67 +52,8 @@ export default function NewsDetailPage() {
       }
     }
 
-    if (selectedStory) {
-      fetchData();
-    }
+    fetchData();
   }, [id]);
-
-  useEffect(() => {
-    async function generateSummary() {
-      if (!selectedNews || !searchResults.length) return;
-
-      const CACHE_DURATION = 24 * 60 * 60 * 1000;
-      if (selectedNews.summary && selectedNews.summaryGeneratedAt) {
-        const age = Date.now() - new Date(selectedNews.summaryGeneratedAt).getTime();
-        if (age < CACHE_DURATION) {
-          setSummary(selectedNews.summary);
-          return;
-        }
-      }
-
-      setSummaryLoading(true);
-
-      try {
-        const articleUrls = searchResults.slice(0, 10).map(r => r.url);
-
-        const articles = [];
-        for (const url of articleUrls) {
-          const content = await fetchContent(url);
-          if (content) {
-            articles.push({
-              title: searchResults.find(r => r.url === url)?.title || '',
-              content: content.content,
-              url
-            });
-          }
-        }
-
-        if (articles.length > 0) {
-          const searchQuery = selectedNews.enhancedQuery || selectedNews.title;
-          const result = await summarize(articles, searchQuery);
-
-          if (result) {
-            setSummary(result.summary);
-            setGeneratedTitle(result.title);
-            setAnalysis(result.analysis || null);
-
-            const updatedStory = {
-              ...selectedNews,
-              summary: result.summary,
-              summaryGeneratedAt: new Date().toISOString()
-            };
-            setSelectedStory(updatedStory);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to generate summary:', error);
-      } finally {
-        setSummaryLoading(false);
-      }
-    }
-
-    generateSummary();
-  }, [selectedNews, searchResults]);
 
   if (loading) {
     return (
@@ -158,7 +69,7 @@ export default function NewsDetailPage() {
     );
   }
 
-  if (error || !selectedNews) {
+  if (error) {
     return (
       <div style={{
         maxWidth: '1200px',
@@ -203,7 +114,6 @@ export default function NewsDetailPage() {
       margin: '0 auto',
       padding: '0.5rem 1rem'
     }}>
-      {/* Back Button */}
       <Link
         href="/"
         style={{
@@ -235,7 +145,6 @@ export default function NewsDetailPage() {
         Powrót
       </Link>
 
-      {/* Main Title and Summary */}
       <div style={{
         background: '#ffffff',
         marginBottom: '2rem'
@@ -251,17 +160,7 @@ export default function NewsDetailPage() {
           {generatedTitle}
         </h1>
 
-        {summaryLoading ? (
-          <div style={{
-            padding: '1rem',
-            fontSize: '0.95rem',
-            lineHeight: '1.6',
-            color: '#525252',
-            fontStyle: 'italic'
-          }}>
-            Generowanie analizy...
-          </div>
-        ) : summary ? (
+        {summary ? (
           <div style={{
             fontSize: '0.95rem',
             lineHeight: '1.6',
@@ -272,12 +171,9 @@ export default function NewsDetailPage() {
         ) : null}
       </div>
 
-      {/* Detailed Analysis */}
-      {analysis && !summaryLoading && (
+      {analysis && (
         <AnalysisDisplay analysis={analysis} />
       )}
-
-      {/* Search Results removed */}
     </div>
   );
 }

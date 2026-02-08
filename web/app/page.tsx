@@ -6,9 +6,7 @@ import { useNewsFetch } from './hooks';
 
 export default function ManipulationAnalyzer() {
   const { data: stories, loading, error } = useNewsFetch({
-    query: 'Polska',
-    count: 20,
-    freshness: 'pd'
+    count: 20
   });
 
   if (loading) {

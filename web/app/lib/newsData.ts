@@ -9,7 +9,7 @@ export interface Article {
 }
 
 export interface Story {
-  id: number;
+  id: string;
   title: string;
   category: string;
   categoryColor: string;
@@ -25,7 +25,7 @@ export interface Story {
 
 export const SAMPLE_STORIES: Story[] = [
   {
-    id: 1,
+    id: '1',
     title: 'Rząd zapowiada reformę systemu ochrony zdrowia',
     category: 'Polityka',
     categoryColor: '#dc2626',
@@ -57,7 +57,7 @@ export const SAMPLE_STORIES: Story[] = [
     ]
   },
   {
-    id: 2,
+    id: '2',
     title: 'Polska gospodarka: wzrost PKB powyżej prognoz',
     category: 'Gospodarka',
     categoryColor: '#16a34a',
