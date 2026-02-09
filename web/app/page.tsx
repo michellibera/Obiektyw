@@ -38,13 +38,13 @@ export default function ObiektywHome() {
 
       {loading && (
         <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: '13px' }}>
-          Ladowanie tematow...
+          Ładowanie tematów...
         </div>
       )}
 
       {error && (
         <div style={{ padding: '24px 0', color: '#C23B3B', fontSize: '13px' }}>
-          Blad: {error}
+          Błąd: {error}
         </div>
       )}
 

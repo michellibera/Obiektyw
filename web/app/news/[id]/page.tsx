@@ -208,7 +208,7 @@ export default function NewsDetailPage() {
   if (loading) {
     return (
       <div style={{ padding: '2rem 0', textAlign: 'center', color: 'var(--muted)' }}>
-        Ladowanie...
+        Ładowanie...
       </div>
     );
   }
@@ -364,7 +364,6 @@ export default function NewsDetailPage() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, marginTop: '6px' }}>
                       <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '18px', fontWeight: 500, color: getNarrativeColor(article.narrativeIndex) }}>{article.narrativeIndex}</span>
-                      <span style={{ color: 'var(--subtle)', fontSize: '12px', transform: isExpanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>&rarr;</span>
                     </div>
                   </div>
 
