@@ -244,8 +244,8 @@ export default function NewsDetailPage() {
     <div>
       <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '13px', marginBottom: '28px' }}>&larr; Wroc do listy</button>
 
-      <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '30px', fontWeight: 400, lineHeight: 1.3, marginBottom: '14px' }}>{mappedAnalysis.title}</h1>
-      <p style={{ fontSize: '20px', lineHeight: 1.7, fontFamily: 'var(--font-serif)', marginBottom: '32px' }}>{mappedAnalysis.summary}</p>
+      <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '30px', fontWeight: 400, lineHeight: 1.3, marginBottom: '14px' }}>{mappedAnalysis.title}</h1>
+      <p style={{ fontSize: '20px', lineHeight: 1.7, fontFamily: 'var(--font-archivo)', marginBottom: '32px' }}>{mappedAnalysis.summary}</p>
 
       <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px', marginBottom: '28px' }}>
         <div style={{ marginBottom: '28px' }}>
@@ -333,7 +333,7 @@ export default function NewsDetailPage() {
                         <span style={{ fontSize: '10px', fontWeight: 600, color: pol?.color, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{pol?.label}</span>
                         {article.neutralityBonus && <span style={{ fontSize: '10px', fontWeight: 600, color: '#1A7A3A' }}>&#9733; Neutralny</span>}
                       </div>
-                      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 400, lineHeight: 1.35 }}>{article.title}</h3>
+                      <h3 style={{ fontFamily: 'var(--font-archivo)', fontSize: '20px', fontWeight: 400, lineHeight: 1.35 }}>{article.title}</h3>
                       <div style={{ textAlign: 'center', marginTop: '6px' }}>
                         <button
                           type="button"
@@ -383,7 +383,7 @@ export default function NewsDetailPage() {
                         <p style={{ fontSize: '12px', marginBottom: '6px' }}>
                           <span style={{ fontWeight: 600, color: 'var(--fg)' }}>Podsumowanie: </span>
                         </p>
-                        <p style={{ fontSize: '16px', color: 'var(--fg)', lineHeight: 1.6, fontFamily: 'var(--font-serif)' }}>{article.summary.conclusions}</p>
+                        <p style={{ fontSize: '16px', color: 'var(--fg)', lineHeight: 1.6, fontFamily: 'var(--font-archivo)' }}>{article.summary.conclusions}</p>
                       </div>
 
                       <div style={{ paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid var(--border)' }}>
@@ -431,7 +431,7 @@ export default function NewsDetailPage() {
                                     <SeverityDot severity={tech.severity} />
                                     <span style={{ fontSize: '10px' }}>{tech.severity}</span>
                                   </div>
-                                  <p style={{ fontSize: '15px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', lineHeight: 1.5, marginBottom: '4px' }}>
+                                  <p style={{ fontSize: '15px', fontFamily: 'var(--font-archivo)', fontStyle: 'italic', lineHeight: 1.5, marginBottom: '4px' }}>
                                     {tech.quote}
                                   </p>
                                   <p style={{ fontSize: '14px', lineHeight: 1.5 }}>{tech.explanation}</p>

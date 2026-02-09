@@ -28,10 +28,10 @@ export default function ObiektywHome() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: '48px' }}>
-        <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '33px', fontWeight: 600, lineHeight: 1.2, marginBottom: '8px', color: 'var(--fg)' }}>
+        <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '28px', fontWeight: 600, lineHeight: 1.2, marginBottom: '8px', color: 'var(--fg)' }}>
           Analiza polskich mediów i technik manipulacji
         </h1>
-        <p style={{ color: "var(--muted)", fontSize: "16px", lineHeight: 1.6 }}>
+        <p style={{ color: "var(--muted)", fontSize: "18px", lineHeight: 1.6 }}>
                 Sprawdź, jak różne źródła informują o tych samych wydarzeniach.
         </p>
       </div>
@@ -65,7 +65,7 @@ export default function ObiektywHome() {
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '10px' }}>
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '18px', fontWeight: 400, lineHeight: 1.35, flex: 1 }}>
+                <h3 style={{ fontFamily: 'var(--font-archivo)', fontSize: '18px', fontWeight: 400, lineHeight: 1.35, flex: 1 }}>
                   {story.title}
                   <span style={{ marginLeft: '10px', color: 'var(--subtle)', fontSize: '24px' }}>→</span>
                 </h3>
