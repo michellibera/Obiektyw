@@ -7,6 +7,8 @@ import { generateEnhancedQuery } from '@/lib/services/llm';
 import { summarizeCluster } from '@/lib/services/analysis';
 import { hashArticle, normalizeUrl } from '@/lib/utils/news';
 
+export const runtime = 'nodejs';
+
 const GENERAL_QUERIES = ['Polska'];
 const RELATED_COUNT = 12;
 const GENERAL_COUNT = 20;
@@ -20,8 +22,13 @@ function getCronSecret() {
 function isAuthorized(request: Request): boolean {
   const secret = getCronSecret();
   if (!secret) return true;
-  const header = request.headers.get('x-cron-secret');
-  return header === secret;
+
+  const authHeader = request.headers.get('authorization');
+  if (authHeader === `Bearer ${secret}`) return true;
+
+  // Backward-compatible support for manual invocations.
+  const legacyHeader = request.headers.get('x-cron-secret');
+  return legacyHeader === secret;
 }
 
 async function insertRawArticle(input: {
@@ -78,7 +85,7 @@ async function ensureClusterMembership(environment: string, clusterId: string, a
   }
 }
 
-export async function POST(request: Request) {
+async function handleAnalyze(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
@@ -293,4 +300,12 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(request: Request) {
+  return handleAnalyze(request);
+}
+
+export async function POST(request: Request) {
+  return handleAnalyze(request);
 }
