@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { getDataEnv } from '@/lib/config/data-env';
+import { DetailedAnalysisResponseSchema } from '@/lib/schemas';
 
 export async function GET(
   _request: Request,
@@ -28,13 +29,15 @@ export async function GET(
       );
     }
 
+    const parsedAnalysis = DetailedAnalysisResponseSchema.safeParse(topic.analysisJson);
+
     return NextResponse.json({
       success: true,
       topic: {
         id: topic.id,
         objectiveTitle: topic.objectiveTitle || '',
         summary: topic.summary || '',
-        analysis: topic.analysisJson ?? null,
+        analysis: parsedAnalysis.success ? parsedAnalysis.data : null,
         sources: topic.memberships.map(membership => ({
           title: membership.article.title,
           url: membership.article.canonicalUrl,

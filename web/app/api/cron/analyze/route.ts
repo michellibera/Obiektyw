@@ -267,7 +267,8 @@ async function handleAnalyze(request: Request) {
         data: {
           objectiveTitle: analysis.title,
           summary: analysis.summary,
-          analysisJson: analysis.analysis ?? undefined,
+          // Store raw JSON so we don't drop data when schema validation fails.
+          analysisJson: analysis.analysisRaw ?? undefined,
           lastUpdatedAt: new Date(),
         },
       });
