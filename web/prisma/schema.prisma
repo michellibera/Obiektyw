@@ -19,12 +19,15 @@ model RawArticle {
   publishedAt   DateTime?
   origin        String?
   enhancedQuery String?
+  createdByRunId String?
   createdAt     DateTime @default(now())
 
   memberships   ClusterMembership[]
+  createdByRun  AnalysisRun? @relation(fields: [createdByRunId], references: [id], onDelete: SetNull)
 
   @@unique([environment, canonicalUrl])
   @@index([environment, publishedAt])
+  @@index([environment, createdByRunId])
 }
 
 model TopicCluster {
@@ -35,13 +38,16 @@ model TopicCluster {
   summary        String?
   analysisJson   Json?
   embedding      Bytes?
+  createdByRunId String?
   createdAt      DateTime @default(now())
   lastUpdatedAt  DateTime @default(now())
   status         String   @default("active")
 
   memberships    ClusterMembership[]
+  createdByRun   AnalysisRun? @relation(fields: [createdByRunId], references: [id], onDelete: SetNull)
 
   @@index([environment, lastUpdatedAt])
+  @@index([environment, createdByRunId])
 }
 
 model ClusterMembership {
@@ -64,4 +70,7 @@ model AnalysisRun {
   finishedAt  DateTime?
   statsJson   Json?
   error       String?
+
+  rawArticles  RawArticle[]
+  topicClusters TopicCluster[]
 }
