@@ -162,6 +162,7 @@ export default function NewsDetailPage() {
       return {
         title: article.title,
         source: article.source,
+        url: article.url,
         politicalOrientation: orientationKey,
         politicalConfidence: article.political_orientation.confidence,
         politicalJustification: article.political_orientation.justification,
@@ -242,7 +243,7 @@ export default function NewsDetailPage() {
 
   return (
     <div>
-      <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '13px', marginBottom: '28px' }}>&larr; Wroc do listy</button>
+      <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '13px', marginBottom: '28px' }}>&larr; Wróc do listy</button>
 
       <h1 style={{ fontFamily: 'var(--font-archivo)', fontSize: '30px', fontWeight: 400, lineHeight: 1.3, marginBottom: '14px' }}>{mappedAnalysis.title}</h1>
       <p style={{ fontSize: '20px', lineHeight: 1.7, fontFamily: 'var(--font-archivo)', marginBottom: '32px' }}>{mappedAnalysis.summary}</p>
@@ -329,7 +330,7 @@ export default function NewsDetailPage() {
                   >
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)', color: 'var(--subtle)' }}>{article.source}</span>
+                        <span style={{ fontSize: '12px', fontFamily: 'var(--font-archivo)' }}>{article.source}</span>
                         <span style={{ fontSize: '10px', fontWeight: 600, color: pol?.color, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{pol?.label}</span>
                         {article.neutralityBonus && <span style={{ fontSize: '10px', fontWeight: 600, color: '#1A7A3A' }}>&#9733; Neutralny</span>}
                       </div>
@@ -382,7 +383,19 @@ export default function NewsDetailPage() {
                         <p style={{ fontSize: '12px', marginBottom: '6px' }}>
                           <span style={{ fontWeight: 600, color: 'var(--fg)' }}>Podsumowanie: </span>
                         </p>
-                        <p style={{ fontSize: '16px', color: 'var(--fg)', lineHeight: 1.6, fontFamily: 'var(--font-archivo)' }}>{article.summary.conclusions}</p>
+                        <p style={{ fontSize: '16px', color: 'var(--fg)', lineHeight: 1.6, fontFamily: 'var(--font-archivo)',  marginBottom: '14px' }}>
+                          {article.summary.conclusions}
+                        </p>
+                        <p style={{ fontSize: '12px', marginBottom: '14px' }}>
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ fontWeight: 600, color: 'var(--fg)', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+                          >
+                            Zobacz artykuł &rarr;
+                          </a>
+                        </p>
                       </div>
 
                       <div style={{ paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid var(--border)' }}>

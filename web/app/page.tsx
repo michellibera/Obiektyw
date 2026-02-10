@@ -24,7 +24,7 @@ function CoverageBar({ left, center, right }: { left: number; center: number; ri
 
 export default function ObiektywHome() {
   const router = useRouter();
-  const { data: stories, loading, error } = useNewsFetch({ count: 20 });
+  const { data: stories, loading, error } = useNewsFetch({ count: 30 });
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: '48px' }}>

@@ -28,14 +28,42 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         ::selection { background: #1A1A18; color: #FAFAF8; }
         @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        .appHeaderInner {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .appHeaderNav {
+          display: flex;
+          gap: 2px;
+          flex-wrap: wrap;
+        }
+
+        @media (max-width: 420px) {
+          .appHeaderInner {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .appHeaderNav {
+            width: 100%;
+            justify-content: center;
+          }
+        }
       `}</style>
 
       <header style={{ borderBottom: '1px solid var(--border)', background: 'rgba(250,250,248,0.9)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div style={{ maxWidth: '960px', margin: '0 auto', padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '22px', color: 'var(--fg)', fontWeight: 600 }}>OBIEKTYW</span>
-          </Link>
-          <nav style={{ display: 'flex', gap: '2px' }}>
+        <div className="appHeaderInner" style={{ maxWidth: '960px', margin: '0 auto', padding: '14px 24px' }}>
+          <div>
+            <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+              <span style={{ fontFamily: 'var(--font-archivo)', fontSize: '22px', color: 'var(--fg)', fontWeight: 600 }}>OBIEKTYW</span>
+            </Link>
+          </div>
+
+          <nav className="appHeaderNav">
             {navItems.map(item => {
               const isActive = pathname === item.href;
               return (
@@ -50,6 +78,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     fontWeight: isActive ? 600 : 400,
                     color: isActive ? 'var(--fg)' : 'var(--muted)',
                     transition: 'all 0.15s ease',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {item.label}
