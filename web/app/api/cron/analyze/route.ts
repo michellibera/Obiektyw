@@ -33,6 +33,7 @@ function isAuthorized(request: Request): boolean {
 
 async function insertRawArticle(input: {
   environment: string;
+  runId: string;
   canonicalUrl: string;
   hash: string;
   title: string;
@@ -46,6 +47,7 @@ async function insertRawArticle(input: {
     const record = await prisma.rawArticle.create({
       data: {
         environment: input.environment,
+        createdByRunId: input.runId,
         canonicalUrl: input.canonicalUrl,
         hash: input.hash,
         title: input.title,
@@ -135,6 +137,7 @@ async function handleAnalyze(request: Request) {
 
         const inserted = await insertRawArticle({
           environment,
+          runId: run.id,
           canonicalUrl,
           hash,
           title: result.title,
@@ -187,6 +190,7 @@ async function handleAnalyze(request: Request) {
 
         const relatedRecord = await insertRawArticle({
           environment,
+          runId: run.id,
           canonicalUrl,
           hash,
           title: result.title,
@@ -229,6 +233,7 @@ async function handleAnalyze(request: Request) {
           data: {
             environment,
             searchPhrase,
+            createdByRunId: run.id,
             lastUpdatedAt: new Date(),
           },
         });
