@@ -1,6 +1,6 @@
 import { revalidatePath } from 'next/cache';
-import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { successResponse, errorResponse, ValidationError, UnauthorizedError } from '@/lib/errors';
 
 const RevalidateSchema = z.object({
   path: z.string().min(1, 'Path is required'),
@@ -9,43 +9,36 @@ const RevalidateSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json();
+
     // Optional: Verify secret token for security
     const secret = process.env.REVALIDATION_SECRET;
-    if (secret) {
-      const body = await request.json();
-      if (body.secret !== secret) {
-        return NextResponse.json(
-          { success: false, error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
+    if (secret && body.secret !== secret) {
+      throw new UnauthorizedError('Invalid revalidation secret');
     }
 
-    const body = await request.json();
     const validation = RevalidateSchema.safeParse(body);
-
     if (!validation.success) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid request body' },
-        { status: 400 }
-      );
+      throw new ValidationError('Invalid request body', validation.error.flatten());
     }
 
     const { path } = validation.data;
     revalidatePath(path);
 
-    return NextResponse.json({
-      success: true,
+    return successResponse({
       message: `Cache revalidated for path: ${path}`
     });
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return errorResponse(error.message, error.statusCode, error.details);
+    }
+    if (error instanceof UnauthorizedError) {
+      return errorResponse(error.message, error.statusCode, undefined, error.code);
+    }
     console.error('Revalidation error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
     );
   }
 }

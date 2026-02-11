@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Story } from '@/lib/newsData';
+import { getTopics } from '@/lib/api';
 
 interface UseNewsFetchOptions {
   count?: number;
@@ -21,19 +22,14 @@ export function useNewsFetch(options: UseNewsFetchOptions = {}) {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/api/topics?limit=${count}`);
-        const json = await response.json();
 
-        if (!json.success) {
-          throw new Error(json.error || 'Failed to fetch news');
+        const response = await getTopics(count);
+
+        if (!response.success) {
+          throw new Error(response.error || 'Failed to fetch news');
         }
 
-        const stories: Story[] = json.topics.map((topic: {
-          id: string;
-          objectiveTitle: string;
-          summary: string;
-          lastUpdatedAt: string;
-        }) => ({
+        const stories: Story[] = response.topics.map(topic => ({
           id: topic.id,
           title: topic.objectiveTitle,
           category: 'Wiadomości',

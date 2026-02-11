@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { fetchContent as apiFetchContent } from '@/lib/api';
 
 interface FetchedContent {
   content: string;
@@ -17,22 +18,16 @@ export function useFetchContent() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/fetch-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
+      const response = await apiFetchContent({ url });
 
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to fetch content');
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch content');
       }
 
       return {
-        content: data.content,
-        title: data.title,
-        length: data.length
+        content: response.content || '',
+        title: response.title || '',
+        length: response.length || 0
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';

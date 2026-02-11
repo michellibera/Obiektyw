@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { enhanceQuery as apiEnhanceQuery } from '@/lib/api';
 
 interface UseEnhanceQueryOptions {
   title: string;
@@ -16,19 +17,13 @@ export function useEnhanceQuery() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/enhance-query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(options)
-      });
+      const response = await apiEnhanceQuery(options);
 
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to enhance query');
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to enhance query');
       }
 
-      return data.enhancedQuery;
+      return response.enhancedQuery || null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);

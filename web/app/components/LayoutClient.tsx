@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
-import AppShell from './AppShell';
+import { MainLayout } from './templates';
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary>
-      <AppShell>{children}</AppShell>
+      <MainLayout>{children}</MainLayout>
     </ErrorBoundary>
   );
 }

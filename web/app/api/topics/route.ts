@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { getDataEnv } from '@/lib/config/data-env';
+import { successResponse, errorResponse } from '@/lib/errors';
 
 export async function GET(request: Request) {
   try {
@@ -24,8 +24,7 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
+    return successResponse({
       topics: topics.map(topic => ({
         id: topic.id,
         objectiveTitle: topic.objectiveTitle || '',
@@ -36,12 +35,9 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching topics:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
     );
   }
 }

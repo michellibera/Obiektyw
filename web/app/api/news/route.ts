@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { searchNews, searchWeb } from '@/lib/services/brave';
 import { NewsSearchParamsSchema } from '@/lib/schemas';
+import { successResponse, errorResponse, ValidationError } from '@/lib/errors';
 
 export async function GET(request: Request) {
   try {
@@ -9,14 +10,7 @@ export async function GET(request: Request) {
 
     const validation = NewsSearchParamsSchema.safeParse(params);
     if (!validation.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid parameters',
-          details: validation.error.flatten()
-        },
-        { status: 400 }
-      );
+      throw new ValidationError('Invalid parameters', validation.error.flatten());
     }
 
     const { q, count, freshness, type } = validation.data;
@@ -37,19 +31,18 @@ export async function GET(request: Request) {
           extra_snippets: true
         });
 
-    return NextResponse.json({
-      success: true,
+    return successResponse({
       results,
       count: results.length
     });
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return errorResponse(error.message, error.statusCode, error.details);
+    }
     console.error('Error fetching news:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
     );
   }
 }

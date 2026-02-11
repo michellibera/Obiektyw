@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { DetailedAnalysis } from '@/lib/schemas';
+import { summarizeNews } from '@/lib/api';
 
 interface Article {
   title: string;
@@ -29,22 +30,16 @@ export function useSummarize() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/summarize-news', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ articles, searchPhrase })
-      });
+      const response = await summarizeNews({ articles, searchPhrase });
 
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to generate summary');
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to generate summary');
       }
 
       return {
-        title: data.title || '',
-        summary: data.summary || '',
-        analysis: data.analysis || null
+        title: response.title || '',
+        summary: response.summary || '',
+        analysis: response.analysis || null
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';

@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db/prisma';
 import { getDataEnv } from '@/lib/config/data-env';
@@ -6,6 +5,7 @@ import { searchNews } from '@/lib/services/brave';
 import { generateEnhancedQuery } from '@/lib/services/llm';
 import { summarizeCluster } from '@/lib/services/analysis';
 import { hashArticle, normalizeUrl } from '@/lib/utils/news';
+import { successResponse, errorResponse, UnauthorizedError } from '@/lib/errors';
 
 export const runtime = 'nodejs';
 
@@ -26,7 +26,6 @@ function isAuthorized(request: Request): boolean {
   const authHeader = request.headers.get('authorization');
   if (authHeader === `Bearer ${secret}`) return true;
 
-  // Backward-compatible support for manual invocations.
   const legacyHeader = request.headers.get('x-cron-secret');
   return legacyHeader === secret;
 }
@@ -89,7 +88,7 @@ async function ensureClusterMembership(environment: string, clusterId: string, a
 
 async function handleAnalyze(request: Request) {
   if (!isAuthorized(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    throw new UnauthorizedError('Invalid or missing authorization');
   }
 
   const environment = getDataEnv();
@@ -111,7 +110,6 @@ async function handleAnalyze(request: Request) {
 
   try {
     const allNewArticles: string[] = [];
-
     const enhancedQueryById = new Map<string, string>();
     const relatedBySeedId = new Map<string, string[]>();
 
@@ -272,7 +270,6 @@ async function handleAnalyze(request: Request) {
         data: {
           objectiveTitle: analysis.title,
           summary: analysis.summary,
-          // Store raw JSON so we don't drop data when schema validation fails.
           analysisJson: analysis.analysisRaw ?? undefined,
           lastUpdatedAt: new Date(),
         },
@@ -287,7 +284,7 @@ async function handleAnalyze(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, runId: run.id, stats });
+    return successResponse({ runId: run.id, stats });
   } catch (error) {
     await prisma.analysisRun.update({
       where: { id: run.id },
@@ -297,21 +294,36 @@ async function handleAnalyze(request: Request) {
       },
     });
 
-    console.error('Cron analysis error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    throw error;
   }
 }
 
 export async function GET(request: Request) {
-  return handleAnalyze(request);
+  try {
+    return await handleAnalyze(request);
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return errorResponse(error.message, error.statusCode, undefined, error.code);
+    }
+    console.error('Cron analysis error:', error);
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
+    );
+  }
 }
 
 export async function POST(request: Request) {
-  return handleAnalyze(request);
+  try {
+    return await handleAnalyze(request);
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return errorResponse(error.message, error.statusCode, undefined, error.code);
+    }
+    console.error('Cron analysis error:', error);
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
+    );
+  }
 }

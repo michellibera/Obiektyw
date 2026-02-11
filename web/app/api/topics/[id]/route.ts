@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { getDataEnv } from '@/lib/config/data-env';
 import { DetailedAnalysisResponseSchema } from '@/lib/schemas';
+import { successResponse, errorResponse, NotFoundError } from '@/lib/errors';
 
 export async function GET(
   _request: Request,
@@ -23,16 +23,12 @@ export async function GET(
     });
 
     if (!topic) {
-      return NextResponse.json(
-        { success: false, error: 'Topic not found' },
-        { status: 404 }
-      );
+      throw new NotFoundError('Topic not found');
     }
 
     const parsedAnalysis = DetailedAnalysisResponseSchema.safeParse(topic.analysisJson);
 
-    return NextResponse.json({
-      success: true,
+    return successResponse({
       topic: {
         id: topic.id,
         objectiveTitle: topic.objectiveTitle || '',
@@ -49,13 +45,13 @@ export async function GET(
       },
     });
   } catch (error) {
+    if (error instanceof NotFoundError) {
+      return errorResponse(error.message, error.statusCode, undefined, error.code);
+    }
     console.error('Error fetching topic details:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
     );
   }
 }

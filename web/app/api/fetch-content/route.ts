@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { FetchContentSchema } from '@/lib/schemas';
+import { successResponse, errorResponse, ValidationError } from '@/lib/errors';
 
 export async function POST(request: Request) {
   try {
@@ -8,14 +8,7 @@ export async function POST(request: Request) {
     const validation = FetchContentSchema.safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid request body',
-          details: validation.error.flatten()
-        },
-        { status: 400 }
-      );
+      throw new ValidationError('Invalid request body', validation.error.flatten());
     }
 
     const { url } = validation.data;
@@ -40,26 +33,22 @@ export async function POST(request: Request) {
     const extracted = await extractContent(html, url);
 
     if (!extracted) {
-      return NextResponse.json(
-        { success: false, error: 'Failed to extract content' },
-        { status: 422 }
-      );
+      return errorResponse('Failed to extract content', 422);
     }
 
-    return NextResponse.json({
-      success: true,
+    return successResponse({
       content: extracted.textContent,
       title: extracted.title,
       length: extracted.length
     });
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return errorResponse(error.message, error.statusCode, error.details);
+    }
     console.error('Fetch content error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
+    return errorResponse(
+      error instanceof Error ? error.message : 'Unknown error',
+      500
     );
   }
 }
