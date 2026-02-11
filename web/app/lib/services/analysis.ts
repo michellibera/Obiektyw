@@ -13,8 +13,31 @@ interface ArticleInput {
 interface AnalysisResult {
   title: string;
   summary: string;
+  category: string;
   analysis: DetailedAnalysis | null;
   analysisRaw: unknown | null;
+}
+
+const ALLOWED_CATEGORIES = new Set([
+  'Polityka',
+  'Gospodarka',
+  'Spoleczenstwo',
+  'Zdrowie',
+  'Edukacja',
+  'Prawo',
+  'Bezpieczenstwo',
+  'Swiat',
+  'Technologia',
+  'Klimat',
+  'Kultura',
+  'Sport',
+  'Inne',
+]);
+
+function normalizeCategory(value: unknown): string {
+  if (typeof value !== 'string') return 'Inne';
+  const trimmed = value.trim();
+  return ALLOWED_CATEGORIES.has(trimmed) ? trimmed : 'Inne';
 }
 
 export async function summarizeCluster(
@@ -25,6 +48,7 @@ export async function summarizeCluster(
     return {
       title: mockSummarizeNewsResult.title,
       summary: mockSummarizeNewsResult.summary,
+      category: 'Inne',
       analysis: mockSummarizeNewsResult.analysis,
       analysisRaw: mockSummarizeNewsResult.analysis,
     };
@@ -43,9 +67,10 @@ export async function summarizeCluster(
     temperature: 0.3,
   });
 
-  let parsedResponse: { title?: string; summary?: string; analysis?: unknown };
+  let parsedResponse: { title?: string; summary?: string; category?: unknown; analysis?: unknown };
   let parsedAnalysis: DetailedAnalysis | null = null;
   let analysisRaw: unknown | null = null;
+  let category = 'Inne';
 
   try {
     const cleanedResponse = response
@@ -56,6 +81,7 @@ export async function summarizeCluster(
       .trim();
 
     parsedResponse = JSON.parse(cleanedResponse);
+    category = normalizeCategory(parsedResponse.category);
     analysisRaw = parsedResponse.analysis ?? null;
 
     if (analysisRaw) {
@@ -66,6 +92,7 @@ export async function summarizeCluster(
     parsedResponse = {
       title: articles[0]?.title || 'Wiadomość',
       summary: response.trim(),
+      category: 'Inne',
       analysis: null,
     };
     analysisRaw = null;
@@ -74,6 +101,7 @@ export async function summarizeCluster(
   return {
     title: parsedResponse.title || '',
     summary: parsedResponse.summary || '',
+    category,
     analysis: parsedAnalysis,
     analysisRaw,
   };

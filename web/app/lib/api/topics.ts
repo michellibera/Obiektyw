@@ -5,6 +5,7 @@ export interface TopicSummary {
   id: string;
   objectiveTitle: string;
   summary: string;
+  category?: string;
   lastUpdatedAt: string;
 }
 
@@ -26,6 +27,7 @@ export interface TopicDetail {
   id: string;
   objectiveTitle: string;
   summary: string;
+  category?: string;
   analysis: DetailedAnalysis | null;
   sources: TopicSource[];
 }
@@ -38,9 +40,14 @@ export interface TopicDetailResponse {
 
 export async function getTopics(
   limit: number = 20,
-  offset: number = 0
+  offset: number = 0,
+  category?: string
 ): Promise<TopicsListResponse> {
-  return getJson<TopicsListResponse>('/api/topics', { limit, offset });
+  return getJson<TopicsListResponse>('/api/topics', {
+    limit,
+    offset,
+    category: category || undefined,
+  });
 }
 
 export async function getTopicById(id: string): Promise<TopicDetailResponse> {

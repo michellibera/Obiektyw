@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db/prisma';
 import { getDataEnv } from '@/lib/config/data-env';
 import { searchNews } from '@/lib/services/brave';
-import { generateEnhancedQuery } from '@/lib/services/llm';
+import { dedupeSeedNewsResults, generateEnhancedQuery } from '@/lib/services/llm';
 import { summarizeCluster } from '@/lib/services/analysis';
 import { hashArticle, normalizeUrl } from '@/lib/utils/news';
 import { successResponse, errorResponse, UnauthorizedError } from '@/lib/errors';
@@ -103,6 +103,7 @@ async function handleAnalyze(request: Request) {
   const stats = {
     fetched: 0,
     inserted: 0,
+    seedDeduped: 0,
     relatedFetched: 0,
     clustersCreated: 0,
     clustersUpdated: 0,
@@ -122,9 +123,12 @@ async function handleAnalyze(request: Request) {
         extra_snippets: true,
       });
 
-      stats.fetched += results.length;
+      const deduped = await dedupeSeedNewsResults(results);
 
-      for (const result of results) {
+      stats.fetched += results.length;
+      stats.seedDeduped += Math.max(0, results.length - deduped.length);
+
+      for (const result of deduped) {
         const canonicalUrl = normalizeUrl(result.url);
         const snippet = result.extra_snippets?.join(' ') || result.description || '';
         const hash = hashArticle({
@@ -270,6 +274,7 @@ async function handleAnalyze(request: Request) {
         data: {
           objectiveTitle: analysis.title,
           summary: analysis.summary,
+          category: analysis.category,
           analysisJson: analysis.analysisRaw ?? undefined,
           lastUpdatedAt: new Date(),
         },

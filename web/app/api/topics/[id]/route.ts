@@ -33,6 +33,7 @@ export async function GET(
         id: topic.id,
         objectiveTitle: topic.objectiveTitle || '',
         summary: topic.summary || '',
+        category: topic.category || 'Inne',
         analysis: parsedAnalysis.success ? parsedAnalysis.data : null,
         sources: topic.memberships.map(membership => ({
           title: membership.article.title,

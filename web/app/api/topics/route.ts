@@ -7,12 +7,36 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const limitParam = Number(searchParams.get('limit'));
     const offsetParam = Number(searchParams.get('offset'));
+    const categoryParam = (searchParams.get('category') || '').trim();
     const limit = Math.min(Number.isFinite(limitParam) ? limitParam : 20, 50);
     const offset = Math.max(Number.isFinite(offsetParam) ? offsetParam : 0, 0);
     const environment = getDataEnv();
 
+    const allowedCategories = new Set([
+      'Polityka',
+      'Gospodarka',
+      'Spoleczenstwo',
+      'Zdrowie',
+      'Edukacja',
+      'Prawo',
+      'Bezpieczenstwo',
+      'Swiat',
+      'Technologia',
+      'Klimat',
+      'Kultura',
+      'Sport',
+      'Inne',
+    ]);
+
+    const category = categoryParam && categoryParam !== 'all' && allowedCategories.has(categoryParam)
+      ? categoryParam
+      : undefined;
+
     const topics = await prisma.topicCluster.findMany({
-      where: { environment },
+      where: {
+        environment,
+        ...(category ? { category } : {}),
+      },
       orderBy: { lastUpdatedAt: 'desc' },
       skip: offset,
       take: limit,
@@ -20,6 +44,7 @@ export async function GET(request: Request) {
         id: true,
         objectiveTitle: true,
         summary: true,
+        category: true,
         lastUpdatedAt: true,
       },
     });
@@ -29,6 +54,7 @@ export async function GET(request: Request) {
         id: topic.id,
         objectiveTitle: topic.objectiveTitle || '',
         summary: topic.summary || '',
+        category: topic.category || 'Inne',
         lastUpdatedAt: topic.lastUpdatedAt.toISOString(),
       })),
       count: topics.length,

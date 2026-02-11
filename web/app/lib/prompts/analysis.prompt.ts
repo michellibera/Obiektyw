@@ -60,10 +60,15 @@ LOGICZNE: L01-False dichotomy, L02-Slippery slope, L03-Post hoc, L04-Hasty gener
 
 6. Statystyki agregowane
 
+7. Kategoria tematu (jedna wartość):
+Polityka, Gospodarka, Spoleczenstwo, Zdrowie, Edukacja, Prawo, Bezpieczenstwo, Swiat, Technologia, Klimat, Kultura, Sport, Inne
+Jeśli nie da się jednoznacznie przypisać, wybierz: Inne
+
 FORMAT JSON:
 {
   "title": "string",
   "summary": "string",
+  "category": "Polityka|Gospodarka|Spoleczenstwo|Zdrowie|Edukacja|Prawo|Bezpieczenstwo|Swiat|Technologia|Klimat|Kultura|Sport|Inne",
   "analysis": {
     "search_phrase": "string",
     "analysis_date": "string",

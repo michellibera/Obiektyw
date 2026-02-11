@@ -36,6 +36,7 @@ model TopicCluster {
   searchPhrase   String?
   objectiveTitle String?
   summary        String?
+  category       String   @default("Inne")
   analysisJson   Json?
   embedding      Bytes?
   createdByRunId String?
@@ -47,6 +48,7 @@ model TopicCluster {
   createdByRun   AnalysisRun? @relation(fields: [createdByRunId], references: [id], onDelete: SetNull)
 
   @@index([environment, lastUpdatedAt])
+  @@index([environment, category, lastUpdatedAt])
   @@index([environment, createdByRunId])
 }
 
