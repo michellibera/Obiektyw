@@ -40,15 +40,15 @@ export async function apiClient<T>(
 
   for (let attempt = 0; attempt < retries; attempt++) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutId = timeout > 0 ? setTimeout(() => controller.abort(), timeout) : null;
 
     try {
       const response = await fetch(url, {
         ...fetchOptions,
-        signal: controller.signal,
+        signal: timeout > 0 ? controller.signal : undefined,
       });
 
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
@@ -61,7 +61,7 @@ export async function apiClient<T>(
 
       return response.json();
     } catch (error) {
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
 
       if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
         // Don't retry client errors

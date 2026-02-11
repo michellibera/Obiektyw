@@ -22,8 +22,8 @@ export interface SummarizeNewsResponse {
 
 export async function summarizeNews(params: SummarizeNewsParams): Promise<SummarizeNewsResponse> {
   return postJson<SummarizeNewsResponse>('/api/summarize-news', params, {
-    timeout: 120000, // 2 minuty na analizę LLM
-    retries: 2,
+    timeout: 0, // brak timeout
+    retries: 1,
   });
 }
 
