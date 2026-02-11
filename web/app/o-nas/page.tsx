@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './page.module.css';
 
 const POLITICAL_LABELS: Record<string, { label: string; color: string }> = {
   'skrajna-lewica': { label: 'Skrajna lewica', color: '#9B1D20' },
@@ -34,14 +35,17 @@ const MANIPULATION_TECHNIQUES: Record<string, { namepl: string; category: string
   L05: { namepl: 'Błędne koło', category: 'błąd logiczny' },
   L06: { namepl: 'Autorytet', category: 'błąd logiczny' },
   L07: { namepl: 'Owczy pęd', category: 'błąd logiczny' },
-  L08: { namepl: 'Nie wynika', category: 'bląd logiczny' },
+  L08: { namepl: 'Nie wynika', category: 'błąd logiczny' },
 };
 
 const TECH_CAT_COLORS: Record<string, string> = {
   narracyjna: '#B08030',
   atak: '#A83A3A',
   emocjonalna: '#7B3FA0',
+  // Backwards-compat keys for any older/typoed category strings.
+  'błąd logiczny': '#2A7B6F',
   'blad logiczny': '#2A7B6F',
+  'bląd logiczny': '#2A7B6F',
 };
 
 export default function ONas() {
@@ -90,13 +94,26 @@ export default function ONas() {
             Każde źrodło jest klasyfikowane na osmiopunktowej skali — od skrajnej lewicy po skrajną prawicę, z opcją oznaczenia jako
             neutralne. Klasyfikacja opiera sie na analizie doboru słów, cytowanych źrodeł i ogólnego nachylenia narracyjnego.
           </p>
-          <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-            {Object.entries(POLITICAL_LABELS).map(([key, info]) => (
-              <div key={key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                <div style={{ width: '100%', height: '4px', borderRadius: '2px', background: info.color }} />
-                <span style={{ fontSize: '9px', textAlign: 'center', lineHeight: 1.2 }}>{info.label}</span>
-              </div>
-            ))}
+          <div>
+            <div className={styles.politicalSpectrumBar} aria-label="Spektrum orientacji politycznej">
+              {Object.entries(POLITICAL_LABELS).map(([key, info]) => (
+                <div key={key} className={styles.politicalSpectrumSegment}>
+                  <div className={styles.politicalSpectrumStripe} style={{ background: info.color }} />
+                  <span className={styles.politicalSpectrumLabel} title={info.label}>
+                    {info.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.politicalSpectrumLegend} aria-label="Legenda spektrum">
+              {Object.entries(POLITICAL_LABELS).map(([key, info]) => (
+                <div key={key} className={styles.politicalSpectrumLegendItem}>
+                  <span className={styles.politicalSpectrumDot} style={{ background: info.color }} />
+                  <span className={styles.politicalSpectrumLegendLabel}>{info.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
