@@ -79,8 +79,7 @@ export default function ObiektywHome() {
               flexWrap: 'wrap',
               gap: '6px',
               marginBottom: '18px',
-              paddingBottom: '14px',
-              borderBottom: '1px solid var(--border)'
+              paddingBottom: '14px'
             }}
           >
             {categories.map(cat => {
